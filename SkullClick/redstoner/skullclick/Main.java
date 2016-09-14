@@ -1,6 +1,6 @@
 package redstoner.skullclick;
 
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,18 +28,18 @@ public class Main extends Module implements Listener {
 
 	@Override
 	public String getDescription() {
-		return "Shows whose skull you just clicked";
+		return "Shows a skull's owner when it is right clicked";
 	}
 	
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !e.isCancelled()) {
-			Block block = e.getClickedBlock();
+			BlockState block = e.getClickedBlock().getState();
 			if (block instanceof Skull) {
 				Skull skull = (Skull) block;
 				String owner = skull.getOwner();
-				if (owner.equals("")) {
-					e.getPlayer().sendMessage(ChatColor.YELLOW + "That skull has no name (Steve).");
+				if (owner == null || owner.equals("")) {
+					e.getPlayer().sendMessage(ChatColor.YELLOW + "That skull has no owner.");
 				} else {
 					e.getPlayer().sendMessage(ChatColor.YELLOW + "That's " + owner + ".");
 				}
