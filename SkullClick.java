@@ -35,7 +35,8 @@ public class SkullClick extends Module implements Listener {
 			BlockState block = e.getClickedBlock().getState();
 			if (block instanceof Skull) {
 				Skull skull = (Skull) block;
-				String owner = skull.getOwner();
+				
+				String owner = skull.getOwningPlayer().getName();
 				if (owner == null || owner.equals("")) {
 					e.getPlayer().sendMessage(ChatColor.YELLOW + "That skull has no owner.");
 				} else {
