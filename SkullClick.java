@@ -29,6 +29,7 @@ public class SkullClick extends Module implements Listener {
 		return "Shows a skull's owner when it is right clicked";
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !e.isCancelled()) {
@@ -36,7 +37,7 @@ public class SkullClick extends Module implements Listener {
 			if (block instanceof Skull) {
 				Skull skull = (Skull) block;
 				
-				String owner = skull.getOwningPlayer().getName();
+				String owner = skull.getOwner();
 				if (owner == null || owner.equals("")) {
 					e.getPlayer().sendMessage(ChatColor.YELLOW + "That skull has no owner.");
 				} else {
