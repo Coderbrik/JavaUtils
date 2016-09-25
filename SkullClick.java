@@ -43,6 +43,10 @@ public class SkullClick extends Module implements Listener {
 				} else {
 					e.getPlayer().sendMessage(ChatColor.YELLOW + "That's " + owner + ".");
 				}
+				
+				if (!e.getPlayer().isSneaking()) {
+					e.setCancelled(true);
+				}
 			}
 		}
 	}
