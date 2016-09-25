@@ -5,14 +5,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+
 import redempt.moduleloader.Module;
-import redempt.moduleloader.ModuleLoader;
 
 public class SkullClick extends Module implements Listener {
 	
 	@Override
 	public void onEnable() {
-		ModuleLoader.registerEvent(this);
+		
 	}
 
 	@Override
