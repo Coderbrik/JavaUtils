@@ -1,3 +1,4 @@
+package com.redstoner.javautils;
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;
@@ -28,8 +29,7 @@ public class SkullClick extends Module implements Listener {
 	public String getDescription() {
 		return "Shows a skull's owner when it is right clicked";
 	}
-	
-	@SuppressWarnings("deprecation")
+
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !e.isCancelled()) {
