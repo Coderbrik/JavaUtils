@@ -8,15 +8,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import redempt.moduleloader.Module;
-import redempt.moduleloader.ModuleLoader;
+
+import com.redstoner.moduleLoader.Module;
 
 public class Nametags extends Module implements Listener {
 
 	@Override
 	public void onEnable() {
-		ModuleLoader.registerEvent(this);
 		Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+		
 		for (Rank rank : Rank.values()) {
 			if (!(scoreboard.getTeam(rank.getPrefix() + "_" + rank.toString().toLowerCase()) == null)) {
 				Team team = scoreboard.registerNewTeam(rank.getPrefix() + "_" + rank.toString().toLowerCase());
@@ -25,15 +25,12 @@ public class Nametags extends Module implements Listener {
 		}
 	}
 
-	@Override
-	public void onDisable() {
-	}
-	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		Rank rank = Rank.VISITOR;
 		String team;
+		
 		for (Rank r : Rank.values()) {
 			if (player.hasPermission(r.getPermission()) && r.getRank() < rank.getRank()) {
 				rank = r;

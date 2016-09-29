@@ -7,19 +7,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import redempt.moduleloader.Module;
+import com.redstoner.moduleLoader.Module;
 
 public class SkullClick extends Module implements Listener {
-	
-	@Override
-	public void onEnable() {
-		
-	}
-
-	@Override
-	public void onDisable() {
-	}
-
 	@Override
 	public String getName() {
 		return "SkullClick";
@@ -37,7 +27,9 @@ public class SkullClick extends Module implements Listener {
 			if (block instanceof Skull) {
 				Skull skull = (Skull) block;
 				
+				@SuppressWarnings("deprecation")
 				String owner = skull.getOwner();
+				
 				if (owner == null || owner.equals("")) {
 					e.getPlayer().sendMessage(ChatColor.YELLOW + "That skull has no owner.");
 				} else {
