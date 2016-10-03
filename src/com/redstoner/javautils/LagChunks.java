@@ -33,7 +33,7 @@ public class LagChunks extends Module {
 				if (chunk.getEntities().length > amount) {
 					Location entLoc = chunk.getEntities()[0].getLocation();
 					
-					result.put(new Location(world, entLoc.getX(), entLoc.getY(), entLoc.getZ()), amount);
+					result.put(new Location(world, entLoc.getX(), entLoc.getY(), entLoc.getZ()), chunk.getEntities().length);
 				}
 			}
 		}
@@ -47,7 +47,7 @@ public class LagChunks extends Module {
 		sender.sendMessage("\n" + ChatColor.GREEN + "--- LagChunks ---");
 		
 		for (Location loc : result.keySet()) {
-			sender.sendMessage(ChatColor.AQUA + "Laggy chunk found at: " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + " with " + result.get(loc) + " entities!");
+			sender.sendMessage(ChatColor.AQUA + "Laggy chunk found at: " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + " with " + result.get(loc) + " entities!");
 		}
 	}
 
