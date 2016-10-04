@@ -45,7 +45,7 @@ public class LagChunks extends Module {
 		sender.sendMessage("\n§2--=[ LagChunks ]=--");
 		
 		for (LaggyChunk lc : laggyChunks) {
-			sender.sendMessage("§b[§a"+ laggyChunks.indexOf(lc) + "§b]: §a" + lc.x + "§7, §a" + lc.y + "§7, §a" + lc.z + "§7(" + lc.world.getName() + ") §a- §b" + lc.amount + " entities");
+			sender.sendMessage("§b[§a"+ laggyChunks.indexOf(lc) + "§b]: §a" + lc.x + "§7, §a" + lc.y + "§7, §a" + lc.z + " §7(" + lc.world.getName() + ") §a- §b" + lc.amount + " entities");
 		}
 		
 		sender.sendMessage("§2-------------------");
@@ -64,7 +64,7 @@ public class LagChunks extends Module {
 			
 			if (number < laggyChunks.size()) {
 				player.teleport(laggyChunks.get(number).getLocation());
-				player.sendMessage("§aSuccesfully teleported to laggy chunk no. " + number);
+				player.sendMessage("§aTeleported to chunk " + number + "!");
 				
 			} else {
 				player.sendMessage("§4Invalid chunk number! Use §e/lc list §4 to show laggy chunks!");
