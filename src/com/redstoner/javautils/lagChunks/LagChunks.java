@@ -1,4 +1,4 @@
-package com.redstoner.javautils;
+package com.redstoner.javautils.lagChunks;
 
 import java.util.ArrayList;
 import java.util.List;

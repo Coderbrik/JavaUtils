@@ -1,4 +1,4 @@
-package com.redstoner.javautils;
+package com.redstoner.javautils.lagChunks;
 
 import org.bukkit.Location;
 import org.bukkit.World;

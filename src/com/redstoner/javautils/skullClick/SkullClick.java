@@ -1,4 +1,4 @@
-package com.redstoner.javautils;
+package com.redstoner.javautils.skullClick;
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;

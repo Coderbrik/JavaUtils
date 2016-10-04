@@ -1,4 +1,4 @@
-package com.redstoner.javautils;
+package com.redstoner.javautils.nameTags;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
