@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.Team;
 
 import com.redstoner.moduleLoader.Module;
 
-public class Nametags extends Module implements Listener {
+public class NameTags extends Module implements Listener {
 	
 	@Override
 	public void onEnable() {
@@ -42,7 +42,7 @@ public class Nametags extends Module implements Listener {
 	
 	@Override
 	public String getName() {
-		return "Nametags";
+		return "NameTags";
 	}
 	
 	@Override
