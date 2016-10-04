@@ -34,7 +34,7 @@ public class LagChunks extends Module {
 				if (chunk.getEntities().length > amount) {
 					Location entLoc = chunk.getEntities()[0].getLocation();
 					
-					laggyChunks.add(new LaggyChunk(entLoc.getX(), entLoc.getY(), entLoc.getZ(), world, chunk.getEntities().length));
+					laggyChunks.add(new LaggyChunk(entLoc.getBlockX(), entLoc.getBlockY(), entLoc.getBlockZ(), world, chunk.getEntities().length));
 				}
 			}
 		}
