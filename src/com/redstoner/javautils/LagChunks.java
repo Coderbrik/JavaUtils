@@ -40,7 +40,7 @@ public class LagChunks extends Module {
 		}
 	}
 	
-	@Command(hook="list")
+	@Command(hook="list_cmd")
 	private void list(CommandSender sender) {
 		sender.sendMessage("\n§2--=[ LagChunks ]=--");
 		
@@ -78,14 +78,14 @@ public class LagChunks extends Module {
 	public String getCmdManagerString() {
 		return
 			"command lc {"
+				+ "list {"
+					+ "run list_cmd;"
+					+ "help re-lists already scanned chunks;"
+				+ "}"
+				
 				+ "[int:amount] {"
 					+ "run scan_cmd amount;"
 					+ "help scans for laggy chunks;"
-				+ "}"
-				
-				+ "list {"
-					+ "run list;"
-					+ "help re-lists already scanned chunks;"
 				+ "}"
 				
 				+ "tp [int:number] {"
