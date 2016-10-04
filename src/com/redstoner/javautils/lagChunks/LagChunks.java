@@ -15,12 +15,12 @@ import com.redstoner.moduleLoader.Module;
 
 public class LagChunks extends Module {
 	private List<LaggyChunk> laggyChunks = new ArrayList<LaggyChunk>();
-
+	
 	@Override
 	public String getName() {
 		return "LagChunks";
 	}
-
+	
 	@Override
 	public String getDescription() {
 		return "Checks for laggy chunks";
@@ -40,24 +40,24 @@ public class LagChunks extends Module {
 		}
 	}
 	
-	@Command(hook="list_cmd")
+	@Command(hook = "list_cmd")
 	public void list(CommandSender sender) {
 		sender.sendMessage("\n§2--=[ LagChunks ]=--");
 		
 		for (LaggyChunk lc : laggyChunks) {
-			sender.sendMessage("§b[§a"+ laggyChunks.indexOf(lc) + "§b]: §a" + lc.x + "§7, §a" + lc.y + "§7, §a" + lc.z + " §7(" + lc.world.getName() + ") §a- §b" + lc.amount + " entities");
+			sender.sendMessage("§b[§a" + laggyChunks.indexOf(lc) + "§b]: §a" + lc.x + "§7, §a" + lc.y + "§7, §a" + lc.z + " §7(" + lc.world.getName() + ") §a- §b" + lc.amount + " entities");
 		}
 		
 		sender.sendMessage("§2-------------------");
 	}
 	
-	@Command(hook="scan_cmd")
+	@Command(hook = "scan_cmd")
 	public void scan_cmd(CommandSender sender, int amount) {
 		scan(amount);
 		list(sender);
 	}
 	
-	@Command(hook="tp")
+	@Command(hook = "tp")
 	public void tp(CommandSender sender, int number) {
 		Player player = (Player) sender;
 		
@@ -69,7 +69,8 @@ public class LagChunks extends Module {
 			player.sendMessage("§4Invalid chunk number! Use §e/lc list §4 to show laggy chunks!");
 		}
 	}
-
+	
+	//@formatter:off - turns off formatter (has to be a comment)
 	@Override
 	public String getCmdManagerString() {
 		return
@@ -91,6 +92,6 @@ public class LagChunks extends Module {
 				+ "}"
 			+ "}";
 	}
-	
+	//@formatter:on - turns on formatter (has to be a comment)
 	
 }

@@ -5,7 +5,7 @@ import org.bukkit.World;
 
 public class LaggyChunk {
 	public final int x, y, z, amount;
-	public final World world;
+	public final World	world;
 	
 	public LaggyChunk(int x, int y, int z, World world, int amount) {
 		this.x = x;

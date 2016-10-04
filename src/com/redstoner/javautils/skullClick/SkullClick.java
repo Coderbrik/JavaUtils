@@ -19,7 +19,7 @@ public class SkullClick extends Module implements Listener {
 	public String getDescription() {
 		return "Shows a skull's owner when it is right clicked";
 	}
-
+	
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !e.isCancelled()) {

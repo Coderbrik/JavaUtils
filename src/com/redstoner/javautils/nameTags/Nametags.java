@@ -12,7 +12,7 @@ import org.bukkit.scoreboard.Team;
 import com.redstoner.moduleLoader.Module;
 
 public class Nametags extends Module implements Listener {
-
+	
 	@Override
 	public void onEnable() {
 		Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -24,7 +24,7 @@ public class Nametags extends Module implements Listener {
 			}
 		}
 	}
-
+	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
@@ -51,15 +51,10 @@ public class Nametags extends Module implements Listener {
 	}
 	
 }
+
 enum Rank {
 	
-	VISITOR,
-	MEMBER,
-	BUILDER,
-	TRUSTED,
-	MIT,
-	MOD,
-	ADMIN;
+	VISITOR, MEMBER, BUILDER, TRUSTED, MIT, MOD, ADMIN;
 	
 	public String getPrefix() {
 		switch (this) {
