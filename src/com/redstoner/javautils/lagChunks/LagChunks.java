@@ -59,18 +59,14 @@ public class LagChunks extends Module {
 	
 	@Command(hook="tp")
 	public void tp(CommandSender sender, int number) {
-		if (sender instanceof Player) {
-			Player player = (Player) sender;
+		Player player = (Player) sender;
+		
+		if (number < laggyChunks.size()) {
+			player.teleport(laggyChunks.get(number).getLocation());
+			player.sendMessage("§aTeleported to chunk " + number + "!");
 			
-			if (number < laggyChunks.size()) {
-				player.teleport(laggyChunks.get(number).getLocation());
-				player.sendMessage("§aTeleported to chunk " + number + "!");
-				
-			} else {
-				player.sendMessage("§4Invalid chunk number! Use §e/lc list §4 to show laggy chunks!");
-			}
 		} else {
-			sender.sendMessage("§4Only players can teleport to laggy chunks!");
+			player.sendMessage("§4Invalid chunk number! Use §e/lc list §4 to show laggy chunks!");
 		}
 	}
 
@@ -91,6 +87,7 @@ public class LagChunks extends Module {
 				+ "tp [int:number] {"
 					+ "run tp number;"
 					+ "help teleports to the specified chunk;"
+					+ "type player;"
 				+ "}"
 			+ "}";
 	}
