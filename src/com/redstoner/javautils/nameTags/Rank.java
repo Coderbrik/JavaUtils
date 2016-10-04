@@ -47,6 +47,27 @@ public enum Rank {
 		}
 	}
 	
+	public int getPriority() {
+		switch (this) {
+			case VISITOR:
+				return 1;
+			case MEMBER:
+				return 2;
+			case BUILDER:
+				return 3;
+			case TRUSTED:
+				return 4;
+			case TRAININGMOD:
+				return 5;
+			case MOD:
+				return 6;
+			case ADMIN:
+				return 7;
+			default:
+				return 1;
+		}
+	}
+	
 	public ChatColor getColor() {
 		switch (this) {
 			case VISITOR:

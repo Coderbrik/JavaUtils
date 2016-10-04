@@ -37,18 +37,14 @@ public class NameTags extends Module implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		String playerName = e.getPlayer().getName();
-		Rank rank = null;
+		Rank rank = Rank.VISITOR;
 		
 		for (Rank r : Rank.values()) {
 			if (e.getPlayer().hasPermission(r.getPermission())) {
-				rank = r;
-				break;
+				if (r.getPriority() > rank.getPriority()) {
+					rank = r;
+				}
 			}
-		}
-		
-		if (rank == null) {
-			Bukkit.getLogger().warning("Could not find rank of " + playerName + "!");
-			return;
 		}
 		
 		for (Rank r : Rank.values()) {
