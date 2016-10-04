@@ -41,7 +41,7 @@ public class LagChunks extends Module {
 	}
 	
 	@Command(hook="list_cmd")
-	private void list(CommandSender sender) {
+	public void list(CommandSender sender) {
 		sender.sendMessage("\n§2--=[ LagChunks ]=--");
 		
 		for (LaggyChunk lc : laggyChunks) {
