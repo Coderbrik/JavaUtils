@@ -1,19 +1,20 @@
 package com.redstoner.javautils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
 
 public class LagChunks extends Module {
+	private List<LaggyChunk> laggyChunks = new ArrayList<LaggyChunk>();
 
 	@Override
 	public String getName() {
@@ -25,40 +26,73 @@ public class LagChunks extends Module {
 		return "Checks for laggy chunks";
 	}
 	
-	private Map<Location, Integer> scan(int amount) {
-		Map<Location, Integer> result = new HashMap<>();
+	private void scan(int amount) {
+		laggyChunks.clear();
 		
 		for (World world : Bukkit.getServer().getWorlds()) {
 			for (Chunk chunk : world.getLoadedChunks()) {
 				if (chunk.getEntities().length > amount) {
 					Location entLoc = chunk.getEntities()[0].getLocation();
 					
-					result.put(new Location(world, entLoc.getX(), entLoc.getY(), entLoc.getZ()), chunk.getEntities().length);
+					laggyChunks.add(new LaggyChunk(entLoc.getX(), entLoc.getY(), entLoc.getZ(), world, chunk.getEntities().length));
 				}
 			}
 		}
-		return result;
+	}
+	
+	@Command(hook="list")
+	private void list(CommandSender sender) {
+		sender.sendMessage("\n§2--=[ LagChunks ]=--");
+		
+		for (LaggyChunk lc : laggyChunks) {
+			sender.sendMessage("§b[§a"+ laggyChunks.indexOf(lc) + "§b]: §a" + lc.x + "§7, §a" + lc.y + "§7, §a" + lc.z + "§7(" + lc.world.getName() + ") §a- §b" + lc.amount + " entities");
+		}
+		
+		sender.sendMessage("§2-------------------");
 	}
 	
 	@Command(hook="scan_cmd")
 	public void scan_cmd(CommandSender sender, int amount) {
-		Map<Location, Integer> result = scan(amount);
-		
-		sender.sendMessage("\n" + ChatColor.GREEN + "--- LagChunks ---");
-		
-		for (Location loc : result.keySet()) {
-			sender.sendMessage(ChatColor.AQUA + "Laggy chunk found at: " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + " with " + result.get(loc) + " entities!");
+		scan(amount);
+		list(sender);
+	}
+	
+	@Command(hook="tp")
+	public void tp(CommandSender sender, int number) {
+		if (sender instanceof Player) {
+			Player player = (Player) sender;
+			
+			if (number < laggyChunks.size()) {
+				player.teleport(laggyChunks.get(number).getLocation());
+				player.sendMessage("§aSuccesfully teleported to laggy chunk no. " + number);
+				
+			} else {
+				player.sendMessage("§4Invalid chunk number! Use §e/lc list §4 to show laggy chunks!");
+			}
+		} else {
+			sender.sendMessage("§4Only players can teleport to laggy chunks!");
 		}
 	}
 
 	@Override
 	public String getCmdManagerString() {
-		return "command lc {"
+		return
+			"command lc {"
 				+ "[int:amount] {"
 					+ "run scan_cmd amount;"
 					+ "help scans for laggy chunks;"
-					+ "}"
-				+ "}";
+				+ "}"
+				
+				+ "list {"
+					+ "run list;"
+					+ "help re-lists already scanned chunks;"
+				+ "}"
+				
+				+ "tp [int:number] {"
+					+ "run tp number;"
+					+ "help teleports to the specified chunk;"
+				+ "}"
+			+ "}";
 	}
 	
 	
