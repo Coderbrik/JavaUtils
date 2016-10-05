@@ -1,14 +1,9 @@
 package com.redstoner.javautils.busy;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarFile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -31,18 +26,33 @@ public class Busy extends Module implements Listener {
 
 	}
 	
-	
-	public InputStream getCmdManagerInputStream() {
-		try {
-			File file = new File(Busy.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			JarFile jar = new JarFile(file);
-			InputStream stream = jar.getInputStream(jar.getEntry("com/redstoner/javautils/busy/commands.txt"));
-			jar.close();
-			return stream;
-		} catch (URISyntaxException | IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+	@Override
+	public String getCmdManagerString() {
+		return "command busy {"
+			+ "perm utils.imbusy;"
+			+ "on {"
+			+ "	type player;"
+			+ "	perm utils.imbusy.use;"
+			+ "	run busy_on;"
+			+ "	help Toggles your busy status on;"
+			+ "}"
+			+ "off {"
+			+ "	type player;"
+			+ "	perm utils.imbusy.use;"
+			+ "	run busy_off;"
+			+ "	help Toggles your busy status off;"
+			+ "}"
+			+ "toggle {"
+			+ "	type player;"
+			+ "	perm utils.imbusy.use;"
+			+ "	run busy_toggle;"
+			+ "	help Toggles your busy status;"
+			+ "}"
+			+ "status [string:player] {"
+			+ "	help Checks whether a player is busy;"
+			+ "	run busy_stats player;"
+			+ "}"
+		+ "}";
 	}
 	
 	@Command(hook = "busy_on")
