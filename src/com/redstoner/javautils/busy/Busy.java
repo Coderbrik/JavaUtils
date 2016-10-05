@@ -50,7 +50,7 @@ public class Busy extends Module implements Listener {
 			+ "}"
 			+ "status [string:player] {"
 			+ "	help Checks whether a player is busy;"
-			+ "	run busy_stats player;"
+			+ "	run busy_status player;"
 			+ "}"
 		+ "}";
 	}
@@ -89,6 +89,7 @@ public class Busy extends Module implements Listener {
 		for (String alias : aliases) {
 			if (alias.equalsIgnoreCase(cmd)) {
 				message = true;
+				Bukkit.broadcastMessage("That be a tell command!");
 			}
 		}
 		targets.put(e.getPlayer(), args[1]);
@@ -109,6 +110,7 @@ public class Busy extends Module implements Listener {
 		}
 		for (Player p : busy) {
 			if (p.getName().contains(args[1])) {
+				Bukkit.broadcastMessage("That player is busy!");
 				e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
 				e.setCancelled(true);
 				return;
