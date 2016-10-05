@@ -2,6 +2,7 @@ package com.redstoner.javautils.busy;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
 
 public class Busy extends Module implements Listener {
 	
@@ -28,14 +28,21 @@ public class Busy extends Module implements Listener {
 	
 	@Override
 	public void onEnable() {
+
+	}
+	
+	
+	public InputStream getCmdManagerInputStream() {
 		try {
 			File file = new File(Busy.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 			JarFile jar = new JarFile(file);
-			ModuleLoader.registerCommands(jar.getInputStream(jar.getEntry("com/redstoner/javautils/busy/commands.txt")), this);
+			InputStream stream = jar.getInputStream(jar.getEntry("com/redstoner/javautils/busy/commands.txt"));
 			jar.close();
+			return stream;
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	@Command(hook = "busy_on")
