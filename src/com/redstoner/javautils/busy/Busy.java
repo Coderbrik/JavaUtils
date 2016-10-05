@@ -72,6 +72,9 @@ public class Busy extends Module implements Listener {
 		String command = e.getMessage().replaceAll("^/", "");
 		String[] args = command.split(" ");
 		String cmd = args[0];
+		if (args.length < 2) {
+			return;
+		}
 		boolean message = false;
 		for (String alias : aliases) {
 			if (alias.equalsIgnoreCase(cmd)) {
