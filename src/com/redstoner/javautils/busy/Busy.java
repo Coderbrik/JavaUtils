@@ -91,7 +91,6 @@ public class Busy extends Module implements Listener {
 				message = true;
 			}
 		}
-		targets.put(e.getPlayer(), args[1]);
 		if (!message) {
 			for (String alias : replyAliases) {
 				if (alias.equalsIgnoreCase(cmd)) {
@@ -109,6 +108,7 @@ public class Busy extends Module implements Listener {
 		if (!message || e.getPlayer().hasPermission("utils.imbusy.override")) {
 			return;
 		}
+		targets.put(e.getPlayer(), args[1]);
 		for (Player p : busy) {
 			if (p.getName().contains(args[1])) {
 				e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
