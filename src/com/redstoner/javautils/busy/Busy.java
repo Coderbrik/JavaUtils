@@ -93,7 +93,7 @@ public class Busy extends Module implements Listener {
 		}
 		if (!message) {
 			for (String alias : replyAliases) {
-				if (alias.equalsIgnoreCase(cmd)) {
+				if (alias.equalsIgnoreCase(cmd) || cmd.equalsIgnoreCase("essentials:" + alias)) {
 					for (Player p : busy) {
 						if (targets.get(e.getPlayer()) != null && p.getName().toLowerCase().contains(targets.get(e.getPlayer()).toLowerCase())) {
 							e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
@@ -108,7 +108,11 @@ public class Busy extends Module implements Listener {
 		if (!message || e.getPlayer().hasPermission("utils.imbusy.override")) {
 			return;
 		}
-		targets.put(e.getPlayer(), args[1].toLowerCase());
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (player.getName().toLowerCase().contains(args[1].toLowerCase())) {
+				targets.put(e.getPlayer(), args[1].toLowerCase());		
+			}
+		}
 		for (Player p : busy) {
 			if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
 				e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
