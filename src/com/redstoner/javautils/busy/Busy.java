@@ -18,7 +18,7 @@ public class Busy extends Module implements Listener {
 	
 	private List<Player> busy = new ArrayList<>();
 	private Map<Player, String> targets = new HashMap<>();
-	private String[] aliases = {"emsg", "msg", "tell", "etell", "w", "ew", "t", "et", "pm", "epm", "m"};
+	private String[] aliases = {"emsg", "msg", "tell", "etell", "w", "ew", "t", "et", "pm", "epm", "m", "whisper", "ewhisper"};
 	private String[] replyAliases = {"r", "er", "reply", "ereply"};
 	
 	@Override
