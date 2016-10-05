@@ -89,20 +89,21 @@ public class Busy extends Module implements Listener {
 		for (String alias : aliases) {
 			if (alias.equalsIgnoreCase(cmd)) {
 				message = true;
-				Bukkit.broadcastMessage("That be a tell command!");
 			}
 		}
 		targets.put(e.getPlayer(), args[1]);
-		for (String alias : replyAliases) {
-			if (alias.equalsIgnoreCase(cmd)) {
-				for (Player p : busy) {
-					if (targets.get(e.getPlayer()) != null && p.getName().contains(targets.get(e.getPlayer()))) {
-						e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
-						e.setCancelled(true);
-						return;
+		if (!message) {
+			for (String alias : replyAliases) {
+				if (alias.equalsIgnoreCase(cmd)) {
+					for (Player p : busy) {
+						if (targets.get(e.getPlayer()) != null && p.getName().contains(targets.get(e.getPlayer()))) {
+							e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
+							e.setCancelled(true);
+							return;
+						}
 					}
+					return;
 				}
-				return;
 			}
 		}
 		if (!message || e.getPlayer().hasPermission("utils.imbusy.override")) {
@@ -110,7 +111,6 @@ public class Busy extends Module implements Listener {
 		}
 		for (Player p : busy) {
 			if (p.getName().contains(args[1])) {
-				Bukkit.broadcastMessage("That player is busy!");
 				e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
 				e.setCancelled(true);
 				return;
