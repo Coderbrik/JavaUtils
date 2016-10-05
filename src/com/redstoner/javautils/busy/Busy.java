@@ -18,7 +18,7 @@ public class Busy extends Module implements Listener {
 	
 	private List<Player> busy = new ArrayList<>();
 	private Map<Player, String> targets = new HashMap<>();
-	private String[] aliases = {"emsg", "msg", "tell", "etell", "w", "ew", "t", "et", "pm", "epm"};
+	private String[] aliases = {"emsg", "msg", "tell", "etell", "w", "ew", "t", "et", "pm", "epm", "m"};
 	private String[] replyAliases = {"r", "er", "reply", "ereply"};
 	
 	@Override
@@ -87,7 +87,7 @@ public class Busy extends Module implements Listener {
 		}
 		boolean message = false;
 		for (String alias : aliases) {
-			if (alias.equalsIgnoreCase(cmd)) {
+			if (alias.equalsIgnoreCase(cmd) || cmd.equalsIgnoreCase("essentials:" + alias)) {
 				message = true;
 			}
 		}
@@ -95,7 +95,7 @@ public class Busy extends Module implements Listener {
 			for (String alias : replyAliases) {
 				if (alias.equalsIgnoreCase(cmd)) {
 					for (Player p : busy) {
-						if (targets.get(e.getPlayer()) != null && p.getName().contains(targets.get(e.getPlayer()))) {
+						if (targets.get(e.getPlayer()) != null && p.getName().toLowerCase().contains(targets.get(e.getPlayer()).toLowerCase())) {
 							e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
 							e.setCancelled(true);
 							return;
@@ -108,9 +108,9 @@ public class Busy extends Module implements Listener {
 		if (!message || e.getPlayer().hasPermission("utils.imbusy.override")) {
 			return;
 		}
-		targets.put(e.getPlayer(), args[1]);
+		targets.put(e.getPlayer(), args[1].toLowerCase());
 		for (Player p : busy) {
-			if (p.getName().contains(args[1])) {
+			if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
 				e.getPlayer().sendMessage(ChatColor.RED + "You may not message " + p.getName() + " at this time, they are busy.");
 				e.setCancelled(true);
 				return;
