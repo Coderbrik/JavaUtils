@@ -27,8 +27,8 @@ public class NameTags extends Module implements Listener {
 		
 		for (Rank rank : Rank.values()) {
 			if (scoreboard.getTeam(rank.getScoreboardName()) == null) {
-				Team team = scoreboard.registerNewTeam(rank.getScoreboardName());
-				team.setPrefix(rank.getColor().toString());
+				scoreboard.registerNewTeam(rank.getScoreboardName());
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "scoreboard teams option " + rank.getScoreboardName() + " color " + rank.getColor());
 			}
 		}
 	}

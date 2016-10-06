@@ -1,7 +1,5 @@
 package com.redstoner.javautils.nameTags;
 
-import org.bukkit.ChatColor;
-
 public enum Rank {
 	VISITOR, MEMBER, BUILDER, TRUSTED, TRAININGMOD, MOD, ADMIN;
 	
@@ -68,24 +66,24 @@ public enum Rank {
 		}
 	}
 	
-	public ChatColor getColor() {
+	public String getColor() {
 		switch (this) {
 			case VISITOR:
-				return ChatColor.GRAY;
+				return "gray";
 			case MEMBER:
-				return ChatColor.WHITE;
+				return "white";
 			case BUILDER:
-				return ChatColor.GREEN;
+				return "green";
 			case TRUSTED:
-				return ChatColor.DARK_AQUA;
+				return "dark_aqua";
 			case TRAININGMOD:
-				return ChatColor.RED;
+				return "red";
 			case MOD:
-				return ChatColor.RED;
+				return "red";
 			case ADMIN:
-				return ChatColor.DARK_RED;
+				return "dark_red";
 			default:
-				return ChatColor.GRAY;
+				return "gray";
 		}
 	}
 }
