@@ -41,8 +41,6 @@ public class CryptographyHandler {
 	public static boolean verify(String password, String stored) {
 		String[] split = stored.split("\\$");
 		
-		System.out.println("verifying " + password + " " + split[3] + " " + split[4]);
-		
 		return verify(password, split[3], split[4]);
 	}
 	
