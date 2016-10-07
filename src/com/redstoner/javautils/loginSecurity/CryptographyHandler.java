@@ -11,7 +11,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class CryptographyHandler {
-	public static String encrypt(String password, String salt) {
+	public static String hash(String password, String salt) {
 		String algorithm = "PBKDF2WithHmacSHA256";
 		int derivedKeyLength = 256;
 		int iterations = 200000;
@@ -19,23 +19,23 @@ public class CryptographyHandler {
 		
 		KeySpec spec = new PBEKeySpec(password.toCharArray(), decodedSalt, iterations, derivedKeyLength);
 		
-		byte[] encrypted = null;
+		byte[] hashed = null;
 		
 		try {
 			SecretKeyFactory f = SecretKeyFactory.getInstance(algorithm);
 			
-			encrypted = f.generateSecret(spec).getEncoded();
+			hashed = f.generateSecret(spec).getEncoded();
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		
-		return Base64.getEncoder().encodeToString(encrypted);
+		return Base64.getEncoder().encodeToString(hashed);
 	}
 	
 	public static boolean verify(String password, String salt, String hash) {
 		String actualHash = hash + "=";
 		
-		return encrypt(password, salt).equals(actualHash);
+		return hash(password, salt).equals(actualHash);
 	}
 	
 	public static boolean verify(String password, String stored) {
