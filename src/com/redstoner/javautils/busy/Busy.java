@@ -55,6 +55,28 @@ public class Busy extends Module implements Listener {
 		+ "}";
 	}
 	
+	@Command(hook = "busy_toggle")
+	public void busyToggle(CommandSender sender) {
+		Player player = (Player) sender;
+		if (busy.contains(player)) {
+			busy.remove(player);
+			Bukkit.broadcastMessage(player.getDisplayName() + ChatColor.RESET + "" + ChatColor.GRAY + " is no longer busy");
+		} else {
+			busy.add(player);
+			Bukkit.broadcastMessage(player.getDisplayName() + ChatColor.RESET + "" + ChatColor.GRAY + " is now busy");
+		}
+	}
+	
+	@Command(hook = "busy_status")
+	public void busyStatus(CommandSender sender, String player) {
+		Player p = Bukkit.getPlayer(player);
+		if (busy.contains(p)) {
+			sender.sendMessage(ChatColor.GREEN + "That player is busy!");
+		} else {
+			sender.sendMessage(ChatColor.GREEN + "That player is not busy!");
+		}
+	}
+	
 	@Command(hook = "busy_on")
 	public void busyOn(CommandSender sender) {
 		Player player = (Player) sender;
