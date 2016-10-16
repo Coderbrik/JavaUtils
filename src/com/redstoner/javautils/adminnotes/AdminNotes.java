@@ -24,7 +24,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class AdminNotes extends Module implements Listener {
 	
-	File file = new File("plugins/ModuleLoader/config/adminnotes.json");
+	File file = new File(ModuleLoader.getLoader().getDataFolder(), "adminnotes.json");
 	
 	@Override
 	public String getDescription() {
