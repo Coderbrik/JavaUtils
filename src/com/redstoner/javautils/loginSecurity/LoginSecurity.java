@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -115,11 +116,6 @@ public class LoginSecurity extends Module implements Listener {
 	public void cgpass(CommandSender sender, String oldPassword, String newPassword) {
 		Player player = (Player) sender;
 		
-		if (loggingIn.containsKey(player.getUniqueId())) {
-			player.sendMessage("You have to log in first!");
-			return;
-		}
-		
 		if (!isRegistered(player)) {
 			player.sendMessage(ChatColor.RED + "You are not registered!");
 			return;
@@ -152,11 +148,6 @@ public class LoginSecurity extends Module implements Listener {
 	@Command(hook = "rmpass")
 	public void rmpass(CommandSender sender, String oldPassword) {
 		Player player = (Player) sender;
-		
-		if (loggingIn.containsKey(player.getUniqueId())) {
-			player.sendMessage("You have to log in first!");
-			return;
-		}
 		
 		if (!isRegistered(player)) {
 			player.sendMessage(ChatColor.RED + "You are not registered!");
@@ -243,6 +234,16 @@ public class LoginSecurity extends Module implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent e) {
 		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onCommand(PlayerCommandPreprocessEvent e) {
+		String command = e.getMessage();
+		
+		if (!command.startsWith("login") && loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can execute commands!");
 			e.setCancelled(true);
 		}
 	}
