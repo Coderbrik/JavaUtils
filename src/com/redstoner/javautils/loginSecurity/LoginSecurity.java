@@ -184,12 +184,12 @@ public class LoginSecurity extends Module implements Listener {
 		@SuppressWarnings("deprecation")
 		OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 		
-		if (!isRegistered((Player) player)) {
+		if (!isRegistered(player)) {
 			sender.sendMessage(ChatColor.RED + "That player is not registered!");
 			return;
 		}
 		
-		if (table.delete(getUuidConstraint((Player) player))) {
+		if (table.delete(getUuidConstraint(player))) {
 			sender.sendMessage(ChatColor.GREEN + "Successfully removed " + playerName + "'s password!");
 		} else {
 			sender.sendMessage(ChatColor.RED + "Failed to remove " + playerName + "'s password!");
@@ -239,15 +239,15 @@ public class LoginSecurity extends Module implements Listener {
 		}
 	}
 	
-	public MysqlConstraint getUuidConstraint(Player player) {
+	public MysqlConstraint getUuidConstraint(OfflinePlayer player) {
 		return new MysqlConstraint("uuid", ConstraintOperator.EQUAL, player.getUniqueId().toString());
 	}
 	
-	public boolean isRegistered(Player player) {
+	public boolean isRegistered(OfflinePlayer player) {
 		return table.get("uuid", getUuidConstraint(player)).length > 0;
 	}
 	
-	public String getHash(Player player) {
+	public String getHash(OfflinePlayer player) {
 		return (String) table.get("pass", getUuidConstraint(player))[0];
 	}
 	
