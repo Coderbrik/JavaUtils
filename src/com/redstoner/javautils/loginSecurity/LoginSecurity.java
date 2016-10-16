@@ -58,7 +58,7 @@ public class LoginSecurity extends Module implements Listener {
 			MysqlDatabase database = ModuleLoader.getLoader().getMysqlHandler().getDatabase(config.get("database"));
 			
 			MysqlField uuid = new MysqlField("uuid", new VarChar(36), true);
-			MysqlField pass = new MysqlField("pass", new VarChar(38), true);
+			MysqlField pass = new MysqlField("pass", new VarChar(88), true);
 			
 			database.createTableIfNotExists(config.get("table"), uuid, pass);
 			
