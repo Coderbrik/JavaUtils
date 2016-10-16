@@ -216,13 +216,13 @@ public class LoginSecurity extends Module implements Listener {
 					}
 					
 					// this is seperate to check for logins
-					if (!loggingIn.containsKey(player.getUniqueId())) {
+					if (!isLoggingIn(player)) {
 						player.sendMessage(ChatColor.GREEN + "Successfully logged in!");
 						break;
 					}
 				}
 				
-				if (loggingIn.containsKey(player.getUniqueId())) {
+				if (isLoggingIn(player)) {
 					player.kickPlayer("You didn't login in time!");
 				}
 			}
@@ -233,14 +233,14 @@ public class LoginSecurity extends Module implements Listener {
 	
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
-		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+		if (isLoggingIn(e.getPlayer())) {
 			e.getPlayer().teleport(loggingIn.get(e.getPlayer().getUniqueId()));
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent e) {
-		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+		if (isLoggingIn(e.getPlayer())) {
 			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can chat!");
 			e.setCancelled(true);
 		}
@@ -250,7 +250,7 @@ public class LoginSecurity extends Module implements Listener {
 	public void onCommand(PlayerCommandPreprocessEvent e) {
 		String command = e.getMessage();
 		
-		if (!command.startsWith("/login") && loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+		if (!command.startsWith("/login") && isLoggingIn(e.getPlayer())) {
 			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can execute commands!");
 			e.setCancelled(true);
 		}
