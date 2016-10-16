@@ -23,6 +23,7 @@ public class RepeatingLoginRunnable implements Runnable {
 		
 		if (!mainClass.isLoggingIn(player)) {
 			player.sendMessage(ChatColor.GREEN + "Successfully logged in!");
+			Bukkit.getScheduler().cancelTask(id);
 		}
 	}
 	
