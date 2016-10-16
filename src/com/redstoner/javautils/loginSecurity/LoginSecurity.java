@@ -271,7 +271,7 @@ public class LoginSecurity extends Module implements Listener {
 			
 			+ "command login [string:password] {"
 				+ "run login password;"
-				+ "help Logs you in, allowing you to access your account;"
+				+ "help Logs you in;"
 				+ "type player;"
 			+ "}"
 			
@@ -283,13 +283,13 @@ public class LoginSecurity extends Module implements Listener {
 			
 			+ "command rmpass [string:oldPassword] {"
 				+ "run rmpass oldPassword;"
-				+ "help Removes your account's password;"
+				+ "help Removes the password of your account;"
 				+ "type player;"
 			+ "}"
 			
 			+ "command rmotherpass [string:playerName] {"
 				+ "run rmotherpass playerName;"
-				+ "help removes another player's password;"
+				+ "help removes the password of another player;"
 				+ "perm utils.loginsecurity.admin;"
 			+ "}";
 	}
