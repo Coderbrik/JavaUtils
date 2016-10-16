@@ -13,7 +13,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -235,6 +237,13 @@ public class LoginSecurity extends Module implements Listener {
 	public void onMove(PlayerMoveEvent e) {
 		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
 			e.getPlayer().teleport(loggingIn.get(e.getPlayer().getUniqueId()));
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onChat(AsyncPlayerChatEvent e) {
+		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+			e.setCancelled(true);
 		}
 	}
 	
