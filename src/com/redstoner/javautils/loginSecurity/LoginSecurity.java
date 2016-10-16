@@ -13,18 +13,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
@@ -37,7 +27,7 @@ import com.redstoner.moduleLoader.mysql.elements.MysqlTable;
 import com.redstoner.moduleLoader.mysql.types.text.VarChar;
 
 public class LoginSecurity extends Module implements Listener {
-	private Map<UUID, Location>	loggingIn;
+	protected Map<UUID, Location>	loggingIn;
 	private MysqlTable			table;
 	
 	@Override
@@ -80,6 +70,8 @@ public class LoginSecurity extends Module implements Listener {
 		}
 		
 		loggingIn = new HashMap<>();
+		
+		Bukkit.getServer().getPluginManager().registerEvents(new CancelledEventsHandler(this), ModuleLoader.getLoader());
 	}
 	
 	@Command(hook = "register")
@@ -228,73 +220,6 @@ public class LoginSecurity extends Module implements Listener {
 		};
 		
 		playerLoginThread.start();
-	}
-	
-	@EventHandler
-	public void onMove(PlayerMoveEvent e) {
-		if (isLoggingIn(e.getPlayer())) {
-			e.getPlayer().teleport(loggingIn.get(e.getPlayer().getUniqueId()));
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onChat(AsyncPlayerChatEvent e) {
-		if (isLoggingIn(e.getPlayer())) {
-			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can chat!");
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onCommand(PlayerCommandPreprocessEvent e) {
-		String command = e.getMessage();
-		
-		if (!command.startsWith("/login") && isLoggingIn(e.getPlayer())) {
-			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can execute commands!");
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onItemHold(PlayerItemHeldEvent e) {
-		if (isLoggingIn(e.getPlayer())) {
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onItemPickup(PlayerPickupItemEvent e) {
-		if (isLoggingIn(e.getPlayer())) {
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onItemDrop(PlayerDropItemEvent e) {
-		if (isLoggingIn(e.getPlayer())) {
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onInteract(PlayerInteractEvent e) {
-		if (isLoggingIn(e.getPlayer())) {
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onArrowPickup(PlayerPickupArrowEvent e) {
-		if (isLoggingIn(e.getPlayer())) {
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onInvClick(InventoryClickEvent e) {
-		if (e.getWhoClicked() instanceof Player && isLoggingIn((Player) e.getWhoClicked())) {
-			e.setCancelled(true);
-		}
 	}
 	
 	public boolean isLoggingIn(Player player) {
