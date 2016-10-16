@@ -15,10 +15,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
@@ -32,7 +39,7 @@ import com.redstoner.moduleLoader.mysql.types.text.VarChar;
 
 public class LoginSecurity extends Module implements Listener {
 	private Map<UUID, Location>	loggingIn;
-	private MysqlTable	table;
+	private MysqlTable			table;
 	
 	@Override
 	public String getName() {
@@ -247,6 +254,59 @@ public class LoginSecurity extends Module implements Listener {
 			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can execute commands!");
 			e.setCancelled(true);
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onItemHold(PlayerItemHeldEvent e) {
+		if (isLoggingIn(e.getPlayer())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onItemPickup(PlayerPickupItemEvent e) {
+		if (isLoggingIn(e.getPlayer())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onItemDrop(PlayerDropItemEvent e) {
+		if (isLoggingIn(e.getPlayer())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onBucket(PlayerBucketEvent e) {
+		if (isLoggingIn(e.getPlayer())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onInteract(PlayerInteractEvent e) {
+		if (isLoggingIn(e.getPlayer())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onArrowPickup(PlayerPickupArrowEvent e) {
+		if (isLoggingIn(e.getPlayer())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onInvClick(InventoryClickEvent e) {
+		if (e.getWhoClicked() instanceof Player && isLoggingIn((Player) e.getWhoClicked())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	public boolean isLoggingIn(Player player) {
+		return loggingIn.containsKey(player.getUniqueId());
 	}
 	
 	public MysqlConstraint getUuidConstraint(OfflinePlayer player) {
