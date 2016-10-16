@@ -243,7 +243,7 @@ public class LoginSecurity extends Module implements Listener {
 	public void onCommand(PlayerCommandPreprocessEvent e) {
 		String command = e.getMessage();
 		
-		if (!command.startsWith("login") && loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+		if (!command.startsWith("/login") && loggingIn.containsKey(e.getPlayer().getUniqueId())) {
 			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can execute commands!");
 			e.setCancelled(true);
 		}
