@@ -2,13 +2,13 @@ package com.redstoner.javautils.loginSecurity;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ import com.redstoner.moduleLoader.mysql.elements.MysqlTable;
 import com.redstoner.moduleLoader.mysql.types.text.VarChar;
 
 public class LoginSecurity extends Module implements Listener {
-	private List<UUID>	loggingIn;
+	private Map<UUID, Location>	loggingIn;
 	private MysqlTable	table;
 	
 	@Override
@@ -70,7 +70,7 @@ public class LoginSecurity extends Module implements Listener {
 			return;
 		}
 		
-		loggingIn = new ArrayList<>();
+		loggingIn = new HashMap<>();
 	}
 	
 	@Command(hook = "register")
@@ -113,7 +113,7 @@ public class LoginSecurity extends Module implements Listener {
 	public void cgpass(CommandSender sender, String oldPassword, String newPassword) {
 		Player player = (Player) sender;
 		
-		if (loggingIn.contains(player.getUniqueId())) {
+		if (loggingIn.containsKey(player.getUniqueId())) {
 			player.sendMessage("You have to log in first!");
 			return;
 		}
@@ -151,7 +151,7 @@ public class LoginSecurity extends Module implements Listener {
 	public void rmpass(CommandSender sender, String oldPassword) {
 		Player player = (Player) sender;
 		
-		if (loggingIn.contains(player.getUniqueId())) {
+		if (loggingIn.containsKey(player.getUniqueId())) {
 			player.sendMessage("You have to log in first!");
 			return;
 		}
@@ -203,7 +203,7 @@ public class LoginSecurity extends Module implements Listener {
 			return;
 		}
 		
-		loggingIn.add(player.getUniqueId());
+		loggingIn.put(player.getUniqueId(), player.getLocation());
 		
 		Thread playerLoginThread = new Thread() {
 			@Override
@@ -216,13 +216,13 @@ public class LoginSecurity extends Module implements Listener {
 					}
 					
 					// this is seperate to check for logins
-					if (!loggingIn.contains(player.getUniqueId())) {
+					if (!loggingIn.containsKey(player.getUniqueId())) {
 						player.sendMessage(ChatColor.GREEN + "Successfully logged in!");
 						break;
 					}
 				}
 				
-				if (loggingIn.contains(player.getUniqueId())) {
+				if (loggingIn.containsKey(player.getUniqueId())) {
 					player.kickPlayer("You didn't login in time!");
 				}
 			}
@@ -233,8 +233,8 @@ public class LoginSecurity extends Module implements Listener {
 	
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
-		if (loggingIn.contains(e.getPlayer().getUniqueId())) {
-			
+		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+			e.getPlayer().teleport(loggingIn.get(e.getPlayer().getUniqueId()));
 		}
 	}
 	
