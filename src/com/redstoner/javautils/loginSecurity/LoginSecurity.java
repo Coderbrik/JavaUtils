@@ -200,6 +200,10 @@ public class LoginSecurity extends Module implements Listener {
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		
+		if (!isRegistered(player)) {
+			return;
+		}
+		
 		loggingIn.add(player.getUniqueId());
 		
 		Thread playerLoginThread = new Thread() {
