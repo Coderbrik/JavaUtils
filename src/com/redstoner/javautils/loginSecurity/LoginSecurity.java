@@ -234,6 +234,7 @@ public class LoginSecurity extends Module implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent e) {
 		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
+			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can chat!");
 			e.setCancelled(true);
 		}
 	}
