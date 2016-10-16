@@ -36,7 +36,7 @@ public class AdminChat extends Module implements Listener{
 	
 	@Override
 	public void onEnable() {
-		File file = new File("plugins/ModuleLoader/adminchat.json");
+		File file = new File("plugins/ModuleLoader/config/adminchat.json");
 		if (file.exists()) {
 			try {
 				Map<String, String> uuids = ModuleLoader.loadMap(file);
