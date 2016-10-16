@@ -29,7 +29,7 @@ public class CryptographyHandler {
 			e.printStackTrace();
 		}
 		
-		return Base64.getEncoder().encodeToString(hashed);
+		return Base64.getEncoder().encodeToString(hashed).substring(0, 43);
 	}
 	
 	public static boolean verify(String password, String salt, String hash) {
