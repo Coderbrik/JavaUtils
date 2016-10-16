@@ -36,7 +36,7 @@ public class AdminChat extends Module implements Listener{
 	
 	@Override
 	public void onEnable() {
-		File file = new File(ModuleLoader.getLoader().getConfigFolder() + "adminchat.json");
+		File file = new File(ModuleLoader.getLoader().getConfigFolder(), "adminchat.json");
 		if (file.exists()) {
 			try {
 				Map<String, String> uuids = ModuleLoader.loadMap(file);
@@ -83,7 +83,7 @@ public class AdminChat extends Module implements Listener{
 		for (Entry<UUID, Character> entry : keys.entrySet()) {
 			entries.put(entry.getKey().toString(), Character.toString(entry.getValue()));
 		}
-		File file = new File(ModuleLoader.getLoader().getConfigFolder() + "adminchat.json");
+		File file = new File(ModuleLoader.getLoader().getConfigFolder(), "adminchat.json");
 		try {
 			ModuleLoader.saveMap(file, entries);
 		} catch (IOException e) {
