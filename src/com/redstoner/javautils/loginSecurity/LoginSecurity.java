@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
@@ -233,8 +233,10 @@ public class LoginSecurity extends Module implements Listener {
 	}
 	
 	@EventHandler
-	public void onLeave(PlayerQuitEvent e) {
-		
+	public void onMove(PlayerMoveEvent e) {
+		if (loggingIn.contains(e.getPlayer().getUniqueId())) {
+			
+		}
 	}
 	
 	public MysqlConstraint getUuidConstraint(Player player) {
@@ -263,34 +265,44 @@ public class LoginSecurity extends Module implements Listener {
 	@Override
 	public String getCmdManagerString() {
 		return
-			"command register [string:password] {"
-				+ "run register password;"
-				+ "help Protects your account with a password;"
-				+ "type player;"
+			"command register {"
+				+ "[string:password] {"
+					+ "run register password;"
+					+ "help Protects your account with a password;"
+					+ "type player;"
+				+ "}"
 			+ "}"
 			
-			+ "command login [string:password] {"
-				+ "run login password;"
-				+ "help Logs you in;"
-				+ "type player;"
+			+ "command login {"
+				+ "[string:password] {"
+					+ "run login password;"
+					+ "help Logs you in;"
+					+ "type player;"
+				+ "}"
 			+ "}"
 			
-			+ "command cgpass [string:oldPassword] [string:newPassword] {"
-				+ "run cgpass oldPassword newPassword;"
-				+ "help Changes your password to the specified one;"
-				+ "type player;"
+			+ "command cgpass {"
+				+ "[string:oldPassword] [string:newPassword] {"
+					+ "run cgpass oldPassword newPassword;"
+					+ "help Changes your password to the specified one;"
+					+ "type player;"
+				+ "}"
 			+ "}"
 			
-			+ "command rmpass [string:oldPassword] {"
-				+ "run rmpass oldPassword;"
-				+ "help Removes the password of your account;"
-				+ "type player;"
+			+ "command rmpass {"
+				+ "[string:oldPassword] {"
+					+ "run rmpass oldPassword;"
+					+ "help Removes the password of your account;"
+					+ "type player;"
+				+ "}"
 			+ "}"
 			
-			+ "command rmotherpass [string:playerName] {"
-				+ "run rmotherpass playerName;"
-				+ "help removes the password of another player;"
-				+ "perm utils.loginsecurity.admin;"
+			+ "command rmotherpass {"
+				+ "[string:playerName] {"
+					+ "run rmotherpass playerName;"
+					+ "help removes the password of another player;"
+					+ "perm utils.loginsecurity.admin;"
+				+ "}"
 			+ "}";
 	}
 	//@formatter:on - turns on formatter (has to be a comment)
