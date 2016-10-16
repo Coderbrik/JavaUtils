@@ -175,7 +175,7 @@ public class LoginSecurity extends Module implements Listener {
 	}
 	
 	@Command(hook = "rmotherpass")
-	public void rmOtherPass(CommandSender sender, String playerName) {
+	public void rmotherpass(CommandSender sender, String playerName) {
 		if (playerName.equals("")) {
 			sender.sendMessage(ChatColor.RED + "That's not a valid player!");
 			return;
