@@ -33,9 +33,7 @@ public class CryptographyHandler {
 	}
 	
 	public static boolean verify(String password, String salt, String hash) {
-		String actualHash = hash + "=";
-		
-		return hash(password, salt).equals(actualHash);
+		return hash(password, salt).equals(hash);
 	}
 	
 	public static boolean verify(String password, String stored) {
