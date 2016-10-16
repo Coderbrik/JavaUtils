@@ -104,7 +104,6 @@ public class LoginSecurity extends Module implements Listener {
 		
 		if (CryptographyHandler.verify(password, getHash(player))) {
 			loggingIn.remove(player.getUniqueId());
-			player.sendMessage(ChatColor.GREEN + "Successfully logged in!");
 		} else {
 			player.sendMessage(ChatColor.RED + "Wrong password!");
 		}
