@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
@@ -28,7 +29,7 @@ import com.redstoner.moduleLoader.mysql.types.text.VarChar;
 
 public class LoginSecurity extends Module implements Listener {
 	protected Map<UUID, Location>	loggingIn;
-	private MysqlTable			table;
+	private MysqlTable				table;
 	
 	@Override
 	public String getName() {
@@ -196,30 +197,20 @@ public class LoginSecurity extends Module implements Listener {
 		
 		loggingIn.put(player.getUniqueId(), player.getLocation());
 		
-		Thread playerLoginThread = new Thread() {
+		BukkitScheduler scheduler = Bukkit.getScheduler();
+		RepeatingLoginRunnable repeatingRunnable = new RepeatingLoginRunnable(this, player);
+		
+		repeatingRunnable.setId(scheduler.scheduleSyncRepeatingTask(ModuleLoader.getLoader(), repeatingRunnable, 0L, 2L));
+		
+		scheduler.scheduleSyncDelayedTask(ModuleLoader.getLoader(), new Runnable() {
 			@Override
 			public void run() {
-				Long endTime = System.currentTimeMillis() + 60000;
-				
-				while (endTime > System.currentTimeMillis()) {
-					if (!player.isOnline()) {
-						loggingIn.remove(player.getUniqueId());
-					}
-					
-					// this is seperate to check for logins
-					if (!isLoggingIn(player)) {
-						player.sendMessage(ChatColor.GREEN + "Successfully logged in!");
-						break;
-					}
-				}
-				
 				if (isLoggingIn(player)) {
+					scheduler.cancelTask(repeatingRunnable.getId());
 					player.kickPlayer("You didn't login in time!");
 				}
 			}
-		};
-		
-		playerLoginThread.start();
+		}, 1200L);
 	}
 	
 	public boolean isLoggingIn(Player player) {
