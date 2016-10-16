@@ -87,6 +87,7 @@ public class LoginSecurity extends Module implements Listener {
 		try {
 			if (registerPlayer(player, password)) {
 				player.sendMessage(ChatColor.GREEN + "Succesfully registered!");
+				return;
 			}
 		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 			e.printStackTrace();
