@@ -23,7 +23,9 @@ import com.redstoner.moduleLoader.ModuleLoader;
 import com.redstoner.moduleLoader.mysql.elements.ConstraintOperator;
 import com.redstoner.moduleLoader.mysql.elements.MysqlConstraint;
 import com.redstoner.moduleLoader.mysql.elements.MysqlDatabase;
+import com.redstoner.moduleLoader.mysql.elements.MysqlField;
 import com.redstoner.moduleLoader.mysql.elements.MysqlTable;
+import com.redstoner.moduleLoader.mysql.types.text.VarChar;
 
 public class LoginSecurity extends Module implements Listener {
 	private List<UUID>	loggingIn;
@@ -54,6 +56,12 @@ public class LoginSecurity extends Module implements Listener {
 		
 		try {
 			MysqlDatabase database = ModuleLoader.getLoader().getMysqlHandler().getDatabase(config.get("database"));
+			
+			MysqlField uuid = new MysqlField("uuid", new VarChar(36), true);
+			MysqlField pass = new MysqlField("pass", new VarChar(38), true);
+			
+			database.createTableIfNotExists(config.get("table"), uuid, pass);
+			
 			table = database.getTable(config.get("table"));
 		} catch (NullPointerException e) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not use the LoginSecurity config, disabling!");
