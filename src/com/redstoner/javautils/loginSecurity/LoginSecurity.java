@@ -17,7 +17,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerBucketEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -272,13 +271,6 @@ public class LoginSecurity extends Module implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onItemDrop(PlayerDropItemEvent e) {
-		if (isLoggingIn(e.getPlayer())) {
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onBucket(PlayerBucketEvent e) {
 		if (isLoggingIn(e.getPlayer())) {
 			e.setCancelled(true);
 		}
