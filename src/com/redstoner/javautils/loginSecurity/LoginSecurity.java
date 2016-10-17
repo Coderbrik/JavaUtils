@@ -13,12 +13,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
@@ -31,8 +28,8 @@ import com.redstoner.moduleLoader.mysql.elements.MysqlTable;
 import com.redstoner.moduleLoader.mysql.types.text.VarChar;
 
 public class LoginSecurity extends Module implements Listener {
-	private Map<UUID, Location>	loggingIn;
-	private MysqlTable	table;
+	protected Map<UUID, Location>	loggingIn;
+	private MysqlTable				table;
 	
 	@Override
 	public String getName() {
@@ -74,6 +71,8 @@ public class LoginSecurity extends Module implements Listener {
 		}
 		
 		loggingIn = new HashMap<>();
+		
+		Bukkit.getServer().getPluginManager().registerEvents(new CancelledEventsHandler(this), ModuleLoader.getLoader());
 	}
 	
 	@Command(hook = "register")
@@ -88,6 +87,7 @@ public class LoginSecurity extends Module implements Listener {
 		try {
 			if (registerPlayer(player, password)) {
 				player.sendMessage(ChatColor.GREEN + "Succesfully registered!");
+				return;
 			}
 		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 			e.printStackTrace();
@@ -198,55 +198,24 @@ public class LoginSecurity extends Module implements Listener {
 		
 		loggingIn.put(player.getUniqueId(), player.getLocation());
 		
-		Thread playerLoginThread = new Thread() {
+		BukkitScheduler scheduler = Bukkit.getScheduler();
+		RepeatingLoginRunnable repeatingRunnable = new RepeatingLoginRunnable(this, player);
+		
+		repeatingRunnable.setId(scheduler.scheduleSyncRepeatingTask(ModuleLoader.getLoader(), repeatingRunnable, 0L, 2L));
+		
+		scheduler.scheduleSyncDelayedTask(ModuleLoader.getLoader(), new Runnable() {
 			@Override
 			public void run() {
-				Long endTime = System.currentTimeMillis() + 60000;
-				
-				while (endTime > System.currentTimeMillis()) {
-					if (!player.isOnline()) {
-						loggingIn.remove(player.getUniqueId());
-					}
-					
-					// this is seperate to check for logins
-					if (!loggingIn.containsKey(player.getUniqueId())) {
-						player.sendMessage(ChatColor.GREEN + "Successfully logged in!");
-						break;
-					}
-				}
-				
-				if (loggingIn.containsKey(player.getUniqueId())) {
+				if (isLoggingIn(player)) {
+					scheduler.cancelTask(repeatingRunnable.getId());
 					player.kickPlayer("You didn't login in time!");
 				}
 			}
-		};
-		
-		playerLoginThread.start();
+		}, 1200L);
 	}
 	
-	@EventHandler
-	public void onMove(PlayerMoveEvent e) {
-		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
-			e.getPlayer().teleport(loggingIn.get(e.getPlayer().getUniqueId()));
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onChat(AsyncPlayerChatEvent e) {
-		if (loggingIn.containsKey(e.getPlayer().getUniqueId())) {
-			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can chat!");
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onCommand(PlayerCommandPreprocessEvent e) {
-		String command = e.getMessage();
-		
-		if (!command.startsWith("login") && loggingIn.containsKey(e.getPlayer().getUniqueId())) {
-			e.getPlayer().sendMessage(ChatColor.RED + "You must login before you can execute commands!");
-			e.setCancelled(true);
-		}
+	public boolean isLoggingIn(Player player) {
+		return loggingIn.containsKey(player.getUniqueId());
 	}
 	
 	public MysqlConstraint getUuidConstraint(OfflinePlayer player) {
