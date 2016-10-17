@@ -58,20 +58,20 @@ public class AdminChat extends Module implements Listener{
 					e.setCancelled(true);
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						if (player.hasPermission("utils.ac")) {
-							player.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
+							player.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
 						}
 					}
-					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
+					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
 				}
 			} else {
 				if (e.getMessage().startsWith(",")) {
 					e.setCancelled(true);
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						if (player.hasPermission("utils.ac")) {
-							player.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
+							player.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
 						}
 					}
-					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
+					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
 				}
 			}
 		}
