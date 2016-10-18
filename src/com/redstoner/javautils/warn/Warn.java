@@ -9,43 +9,49 @@ import org.bukkit.event.Listener;
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
 
-public class warn extends Module implements Listener {
+public class Warn extends Module implements Listener {
+	//@formatter:off
 	@Override
 	public String getCmdManagerString() {
 		return "command warn {"
-			+ "	perm utils.warn;"
-			+ "	[string:name] {"
-			+ "		run warn name;"
-			+ "	}"
+				+ "perm utils.warn;"
+				
+				+ "[string:name] {"
+					+ "run warn name;"
+					+ "type player;"
+					+ "help Warns other players about definite lag;"
+				+ "}"
 			+ "}"
-			+ "command warnp {"
-			+ " [string:name] {"
-			+ "		run warn_p name;"
-			+ "		type player;"
-			+ " }"
-			+ "}";
 			
+			+ "command warnp {"
+				+ "[string:name] {"
+					+ "run warnp name;"
+					+ "type player;"
+					+ "help Warns other players about possible lag;"
+				+ "}"
+			+ "}";
 	}
+	//@formatter:on
 	
 	@Command(hook = "warn")
-	public void warn_normal(CommandSender sender, String name){
+	public void warn_normal(CommandSender sender, String name) {
 		Player s = (Player) sender;
-		Bukkit.broadcastMessage(ChatColor.AQUA + " = "+ ChatColor.DARK_GREEN + ChatColor.BOLD+ "Lag incomming! "+ ChatColor.WHITE + "-" +s.getDisplayName());
-		
+		Bukkit.broadcastMessage(ChatColor.AQUA + " = " + ChatColor.DARK_GREEN + ChatColor.BOLD + "Lag incomming! " + ChatColor.WHITE + "-" + s.getDisplayName());
 	}
-	@Command(hook = "warn_p")
-	public void warn_possible(CommandSender sender, String name){
+	
+	@Command(hook = "warnp")
+	public void warn_possible(CommandSender sender, String name) {
 		Player s = (Player) sender;
-		Bukkit.broadcastMessage(ChatColor.AQUA + " = "+ ChatColor.DARK_GREEN + ChatColor.BOLD+ "Possible lag incomming! "+ ChatColor.WHITE + "-" +s.getDisplayName());
+		Bukkit.broadcastMessage(ChatColor.AQUA + " = " + ChatColor.DARK_GREEN + ChatColor.BOLD + "Possible lag incomming! " + ChatColor.WHITE + "-" + s.getDisplayName());
 	}
-
+	
 	@Override
 	public String getName() {
-		return "warn";
+		return "Warn";
 	}
-
+	
 	@Override
 	public String getDescription() {
-		return "Warns players for incomming lag.";
+		return "Warns players about incomming lag.";
 	}
 }
