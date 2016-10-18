@@ -10,13 +10,6 @@ import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
 
 public class warn extends Module implements Listener {
-	
-	
-	@Override
-	public void onEnable() {
-
-	}
-	
 	@Override
 	public String getCmdManagerString() {
 		return "command warn {"
@@ -34,12 +27,11 @@ public class warn extends Module implements Listener {
 			
 	}
 	
-	
 	@Command(hook = "warn")
 	public void warn_normal(CommandSender sender, String name){
 		Player s = (Player) sender;
 		Bukkit.broadcastMessage(ChatColor.AQUA + " = "+ ChatColor.DARK_GREEN + ChatColor.BOLD+ "Lag incomming! "+ ChatColor.WHITE + "-" +s.getDisplayName());
-		;
+		
 	}
 	@Command(hook = "warn_p")
 	public void warn_possible(CommandSender sender, String name){
@@ -56,7 +48,4 @@ public class warn extends Module implements Listener {
 	public String getDescription() {
 		return "Warns players for incomming lag.";
 	}
-	
-	
-	
 }
