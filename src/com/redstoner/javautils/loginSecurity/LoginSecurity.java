@@ -28,8 +28,8 @@ import com.redstoner.moduleLoader.mysql.elements.MysqlTable;
 import com.redstoner.moduleLoader.mysql.types.text.VarChar;
 
 public class LoginSecurity extends Module implements Listener {
-	protected Map<UUID, Location>	loggingIn;
-	private MysqlTable				table;
+	protected static Map<UUID, Location>	loggingIn;
+	private MysqlTable						table;
 	
 	@Override
 	public String getName() {
@@ -73,6 +73,10 @@ public class LoginSecurity extends Module implements Listener {
 		loggingIn = new HashMap<>();
 		
 		Bukkit.getServer().getPluginManager().registerEvents(new CancelledEventsHandler(this), ModuleLoader.getLoader());
+	}
+	
+	public static Map<UUID, Location> getLoggingIn() {
+		return loggingIn;
 	}
 	
 	@Command(hook = "register")

@@ -16,17 +16,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.nemez.cmdmgr.Command;
+import com.redstoner.javautils.loginSecurity.LoginSecurity;
 import com.redstoner.moduleLoader.Module;
 import com.redstoner.moduleLoader.ModuleLoader;
 
 public class ChatGroups extends Module implements Listener {
-	ModuleLoader loader;
-	private Map<String, String> keys, groups;
+	ModuleLoader				loader;
+	private Map<String, String>	keys, groups;
 	
 	private List<String> cgToggles;
 	
-	private static final String KEYS_FILENAME = "chatgroup_keys.json";
-	private static final String GROUPS_FILENAME = "chatgroups.json";
+	private static final String	KEYS_FILENAME	= "chatgroup_keys.json";
+	private static final String	GROUPS_FILENAME	= "chatgroups.json";
 	
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "CG" + ChatColor.DARK_GRAY + "] " + ChatColor.RESET;
 	
@@ -71,7 +72,7 @@ public class ChatGroups extends Module implements Listener {
 		Player player = e.getPlayer();
 		String uuid = player.getUniqueId().toString();
 		
-		if (groups.containsKey(uuid)) {
+		if (groups.containsKey(uuid) && !LoginSecurity.getLoggingIn().keySet().contains(player.getUniqueId())) {
 			boolean format = false;
 			
 			if (e.getMessage().startsWith(getCgKey(uuid))) {
