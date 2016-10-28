@@ -83,7 +83,7 @@ public class ChatGroups extends Module implements Listener {
 			}
 			
 			if (format) {
-				e.setFormat(CHAT_PREFIX + " " + player.getDisplayName() + ChatColor.RESET + ": " + ChatColor.GOLD);
+				e.setFormat(CHAT_PREFIX + " " + player.getDisplayName() + ChatColor.RESET + ": " + ChatColor.GOLD + e.getMessage());
 				Set<Player> recipients = e.getRecipients();
 				
 				for (Player p : recipients) {
