@@ -87,7 +87,7 @@ public class ChatGroups extends Module implements Listener {
 				for (Player recipient : Bukkit.getOnlinePlayers()) {
 					String recipientUuid = recipient.getUniqueId().toString();
 					
-					if (groups.get(recipientUuid).equals(groups.get(uuid))) {
+					if (groups.containsKey(recipientUuid) && groups.get(recipientUuid).equals(groups.get(uuid))) {
 						recipient.sendMessage(message);
 					}
 				}
