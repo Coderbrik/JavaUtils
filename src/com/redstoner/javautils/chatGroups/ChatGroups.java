@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -83,18 +82,16 @@ public class ChatGroups extends Module implements Listener {
 			}
 			
 			if (format) {
-				e.setFormat(CHAT_PREFIX + " " + player.getDisplayName() + ChatColor.RESET + ": " + ChatColor.GOLD + e.getMessage());
-				Set<Player> recipients = e.getRecipients();
+				String message = CHAT_PREFIX + player.getDisplayName() + ChatColor.RESET + ": " + ChatColor.GOLD + e.getMessage();
 				
-				for (Player p : recipients) {
-					recipients.remove(p);
-				}
-				
-				for (String key : groups.keySet()) {
-					if (groups.get(key).equals(groups.get(uuid))) {
-						recipients.add(Bukkit.getPlayer(UUID.fromString(key)));
+				for (Player recipient : Bukkit.getOnlinePlayers()) {
+					String recipientUuid = recipient.getUniqueId().toString();
+					
+					if (groups.get(recipientUuid).equals(groups.get(uuid))) {
+						recipient.sendMessage(message);
 					}
 				}
+				e.setCancelled(true);
 			}
 		}
 	}
