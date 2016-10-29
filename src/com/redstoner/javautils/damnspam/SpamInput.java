@@ -50,7 +50,7 @@ public class SpamInput {
 	
 	@Override
 	public String toString(){
-		return "{\"creator\": \"" + player.getUniqueId().toString() + "\", \"timeout_on\": " + timeoutOn + ", \"timeout_off\": " + timeoutOn + ", \"last_time\": " + lastTime + "}";
+		return "{\"creator\": \"" + player.getUniqueId().toString() + "\", \"timeout_on\": " + timeoutOn + ", \"timeout_off\": " + timeoutOff + ", \"last_time\": " + lastTime + "}";
 	}
 	
 }
