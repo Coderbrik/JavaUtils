@@ -284,11 +284,11 @@ public class DamnSpam extends Module implements Listener {
 				String btype = block.getType().toString().toLowerCase().replace("_", " ");
 				double checktime = 0;
 				if (btype.equals("lever") && block.getData() < 8)
-					checktime = data.timeoutOff;
+					checktime = data.getTimeoutOff();
 				else
-					checktime = data.timeoutOn;
+					checktime = data.getTimeoutOn();
 
-				double timeLeft = (data.lastTime + checktime) - ((double) Math.round((double) System.currentTimeMillis() / 10) / 100);
+				double timeLeft = (data.getLastTime() + checktime) - ((double) Math.round((double) System.currentTimeMillis() / 10) / 100);
 				
 				timeLeft = (double) Math.round(timeLeft * 100) / 100;
 				
@@ -299,12 +299,12 @@ public class DamnSpam extends Module implements Listener {
 					event.setCancelled(true);
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThis " + btype + " has a damnspam timeout of " + checktime + ", with " + timeLeft + " left."));
 				} else {
-					data.lastTime = ((double) Math.round((double) System.currentTimeMillis() / 10) / 100);
+					data.setLastTime(((double) Math.round((double) System.currentTimeMillis() / 10) / 100));
 				}
 				
 				inputs.put(posStr, data.toString());
 			}
-		} 
+		}
 	}
 
 }

@@ -5,52 +5,72 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
+
 public class SpamInput {
 
-	protected Player player;
-	protected double timeoutOff;
-	protected double timeoutOn;
-	protected double lastTime;
+	@SerializedName("creator")
+	private UUID player;
 	
+	@SerializedName("timeout_on")
+	private double timeoutOn;
+	
+	@SerializedName("timeout_off")
+	private double timeoutOff;
+	
+	@SerializedName("last_time")
+	private double lastTime;
+
 	protected SpamInput(Player player, double timeoutOff, double timeoutOn, double lastTime) {
-		this.player = player;
+		this.player = player.getUniqueId();
 		this.timeoutOff = timeoutOff;
 		this.timeoutOn = timeoutOn;
 		this.lastTime = lastTime;
 	}
-	
-	protected static SpamInput fromString(String string){
-		string = string.substring(1,string.length() - 1);
-		String[] args = string.split(",");
-		Player player = null;
-		double timeoutOff = 0;
-		double timeoutOn = 0;
-		double lastTime = 0;
-		for(String s : args){
-			String[] vals = s.split(":");
-			String name = vals[0].replace(" ", "").replace("\"", "");
-			String val = vals[1].replace(" ", "").replace("\"", "");
-			switch (name){
-			case "creator":
-				player = Bukkit.getPlayer(UUID.fromString(val));
-				break;
-			case "timeout_on":
-				timeoutOn = Double.parseDouble(val);
-				break;
-			case "timeout_off":
-				timeoutOff = Double.parseDouble(val);
-				break;
-			case "last_time":
-				lastTime = Double.parseDouble(val);
-				break;
-			}
-		}
-		return new SpamInput(player,timeoutOff,timeoutOn,lastTime);
+
+	public Player getPlayer() {
+		return Bukkit.getPlayer(player);
 	}
-	
+
+	public double getTimeoutOn() {
+		return timeoutOn;
+	}
+
+	public double getTimeoutOff() {
+		return timeoutOff;
+	}
+
+	public double getLastTime() {
+		return lastTime;
+	}
+
+	public void setPlayer(UUID player) {
+		this.player = player;
+	}
+
+	public void setTimeoutOn(double timeoutOn) {
+		this.timeoutOn = timeoutOn;
+	}
+
+	public void setTimeoutOff(double timeoutOff) {
+		this.timeoutOff = timeoutOff;
+	}
+
+	public void setLastTime(double lastTime) {
+		this.lastTime = lastTime;
+	}
+
+	protected static SpamInput fromString(String string) {
+		Gson gson = new GsonBuilder().create();
+		return gson.fromJson(string, SpamInput.class);
+	}
+
 	@Override
-	public String toString(){
-		return "{\"creator\": \"" + player.getUniqueId().toString() + "\", \"timeout_on\": " + timeoutOn + ", \"timeout_off\": " + timeoutOff + ", \"last_time\": " + lastTime + "}";
+	public String toString() {
+		Gson gson = new GsonBuilder().create();
+		return gson.toJson(this);
 	}
-	
+
 }
