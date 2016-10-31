@@ -1,0 +1,8 @@
+#IntelliJ
+.idea/
+/out/
+
+#resources/testing
+debug/
+lib/
+.gitignore
