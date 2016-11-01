@@ -103,7 +103,7 @@ public final class BlockPlaceMods extends Module implements Listener {
     }
 
     private File getFile(Player player) {
-        return new File(dataFolder, player.getUniqueId().toString());
+        return new File(dataFolder, player.getUniqueId().toString() + ".json");
     }
 
     private void saveScheduledData() {

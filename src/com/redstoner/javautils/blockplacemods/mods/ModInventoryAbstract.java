@@ -31,9 +31,9 @@ public abstract class ModInventoryAbstract extends ModAbstract<InventoryData> {
         cmdManagerString.append("}");
     }
 
-    protected abstract InventoryType getInventoryType();
+    private final int SLOTS = getInventoryType().getDefaultSize();
 
-    protected final int SLOTS = getInventoryType().getDefaultSize();
+    protected abstract InventoryType getInventoryType();
 
     @Override
     protected InventoryData createDefaultData(PlayerData entryFor) {

@@ -7,7 +7,7 @@ import com.redstoner.javautils.blockplacemods.PlayerData;
 import com.redstoner.javautils.blockplacemods.util.CommandException;
 import com.redstoner.javautils.blockplacemods.util.ThrowingSupplier;
 import com.redstoner.moduleLoader.ModuleLoader;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,7 +21,6 @@ public abstract class ModAbstract<T> implements Mod<T>, Listener {
 
     private static final DefaultingMap<Player, PlayerData> settings = new DefaultingMap<>(PlayerData::new);
     private static final Set<Mod> mods = new HashSet<>();
-    protected final StringBuilder cmdManagerString;
 
     public static Map<Player, PlayerData> getSettings() {
         return settings;
@@ -52,15 +51,12 @@ public abstract class ModAbstract<T> implements Mod<T>, Listener {
 
     private final Set<String> aliases;
     private final T defaultValue;
+    protected final StringBuilder cmdManagerString;
 
-    public ModAbstract() {
-        this.aliases = new HashSet<>();
+    {
+        aliases = new HashSet<>();
         aliases.add(getName());
         defaultValue = createDefaultData(null);
-        CommandManager.registerCommand(getCmdManagerString(), this, ModuleLoader.getLoader());
-        Bukkit.getPluginManager().registerEvents(this, ModuleLoader.getLoader());
-        mods.add(this);
-
         cmdManagerString = new StringBuilder();
         cmdManagerString.append("help {");
         cmdManagerString.append("  run help;");
@@ -69,6 +65,10 @@ public abstract class ModAbstract<T> implements Mod<T>, Listener {
         cmdManagerString.append("  run help;");
         cmdManagerString.append("}  ");
         cmdManagerString.append("  ");
+
+        CommandManager.registerCommand(getCmdManagerString(), this, ModuleLoader.getLoader());
+        Bukkit.getPluginManager().registerEvents(this, ModuleLoader.getLoader());
+        mods.add(this);
     }
 
     @Override
