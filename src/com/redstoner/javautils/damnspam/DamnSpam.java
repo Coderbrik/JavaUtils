@@ -1,5 +1,10 @@
 package com.redstoner.javautils.damnspam;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,6 +26,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.Module;
@@ -55,9 +63,11 @@ public class DamnSpam extends Module implements Listener {
 
 	ModuleLoader loader;
 
-	Map<String, String> inputs;
+	File configFile;
+	
+	Map<String, SpamInput> inputs;
 
-	boolean removingInput = false;
+	boolean changingInput = false;
 	
 	List<Material> acceptedInputs;
 	HashMap<Material, int[][]> attachedBlocks;
@@ -71,8 +81,10 @@ public class DamnSpam extends Module implements Listener {
 	@Override
 	public void onEnable() {
 		loader = ModuleLoader.getLoader();
-
-		inputs = loader.getConfiguration("DamnSpam.json");
+		
+		configFile = new File(loader.getConfigFolder(), "DamnSpam.json");
+		
+		loadInputs();
 
 		acceptedInputs = new ArrayList<Material>();
 		Collections.addAll(acceptedInputs, Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.LEVER);
@@ -88,8 +100,43 @@ public class DamnSpam extends Module implements Listener {
 		players = new HashMap<Player, SpamInput>();
 	}
 
+	public void loadInputs() {
+		inputs = new HashMap<String, SpamInput>();
+		try {
+			FileReader reader = new FileReader(configFile);
+			JSONObject json = (JSONObject) new JSONParser().parse(reader);
+			for(Object key : json.keySet()){
+				JSONObject inputData = (JSONObject) json.get(key);
+				String uuid = (String) inputData.get("creator");
+				Double timeoutOn = (Double) inputData.get("timeout_on");
+				Double timeoutOff = (Double) inputData.get("timeout_off");
+				Double lastTime = (Double) inputData.get("last_time");
+				inputs.put((String) key,new SpamInput(uuid,timeoutOff,timeoutOn,lastTime));
+			}
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	public void saveInputs() {
-		loader.saveConfiguration(inputs, "DamnSpam.json");
+		JSONObject json = new JSONObject();
+		for(String key : inputs.keySet()){
+			JSONObject jsonInput = new JSONObject();
+			SpamInput input = inputs.get(key);
+			jsonInput.put("creator", input.player);
+			jsonInput.put("timeout_on", input.timeoutOn);
+			jsonInput.put("timeout_off", input.timeoutOff);
+			jsonInput.put("last_time", input.lastTime);
+			json.put(key, jsonInput);
+		}
+		try {
+			PrintWriter writer = new PrintWriter(configFile);
+			writer.write(json.toJSONString());
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String locationString(Location loc) {
@@ -140,7 +187,7 @@ public class DamnSpam extends Module implements Listener {
 	public void setPlayer(Player player, boolean destroying, double timeoutOff, double timeoutOn) {
 		SpamInput input = null;
 		if (!destroying) {
-			input = new SpamInput(player, timeoutOff, timeoutOn, 0);
+			input = new SpamInput(player.getUniqueId().toString(), timeoutOff, timeoutOn, 0);
 		}
 		players.put(player, input);
 	}
@@ -156,9 +203,9 @@ public class DamnSpam extends Module implements Listener {
 			String typeStr = block.getType().toString().toLowerCase().replace("_", " ");
 			String locationStr = locationString(block.getLocation());
 
-			removingInput = true;
+			changingInput = true;
 			boolean buildCheck = canBuild(player, block);
-			removingInput = false;
+			changingInput = false;
 			
 			if (!buildCheck) {
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
@@ -177,7 +224,7 @@ public class DamnSpam extends Module implements Listener {
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 						"&aSuccessfully removed the timeout for this " + typeStr));
 			} else {
-				inputs.put(locationStr, players.get(player).toString());
+				inputs.put(locationStr, players.get(player));
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 						"&aSuccessfully set a timeout for this " + typeStr));
 			}
@@ -196,6 +243,8 @@ public class DamnSpam extends Module implements Listener {
 		if (!inputs.containsKey(posStr))
 			return;
 
+		SpamInput input = inputs.get(posStr);
+		
 		Player sender = event.getPlayer();
 
 		String typeStr = block.getType().toString().toLowerCase().replace("_", " ");
@@ -209,12 +258,8 @@ public class DamnSpam extends Module implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
-		removingInput = true;
-		boolean success = canBuild(sender, block);
-		removingInput = false;
 		
-		if (success) {
+		if (sender.hasPermission("damnspam.admin") || sender.getUniqueId().toString().equals(input.player)) {
 			inputs.remove(posStr);
 			saveInputs();
 			sender.sendMessage(
@@ -255,7 +300,7 @@ public class DamnSpam extends Module implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBreak(BlockBreakEvent event) {
-		if (removingInput || event.isCancelled())
+		if (changingInput || event.isCancelled())
 			return;
 
 		boolean register = attemptInputRegister(event.getPlayer(), event.getBlock(), event);
@@ -278,17 +323,16 @@ public class DamnSpam extends Module implements Listener {
 			Player sender = event.getPlayer();
 			Block block = event.getClickedBlock();
 			String posStr = locationString(block.getLocation());
-			String inputStr = inputs.get(posStr);
-			if (inputStr != null) {
-				SpamInput data = SpamInput.fromString(inputStr);
+			SpamInput data = inputs.get(posStr);
+			if (data != null) {
 				String btype = block.getType().toString().toLowerCase().replace("_", " ");
 				double checktime = 0;
 				if (btype.equals("lever") && block.getData() < 8)
-					checktime = data.getTimeoutOff();
+					checktime = data.timeoutOff;
 				else
-					checktime = data.getTimeoutOn();
+					checktime = data.timeoutOn;
 
-				double timeLeft = (data.getLastTime() + checktime) - ((double) Math.round((double) System.currentTimeMillis() / 10) / 100);
+				double timeLeft = (data.lastTime + checktime) - ((double) Math.round((double) System.currentTimeMillis() / 10) / 100);
 				
 				timeLeft = (double) Math.round(timeLeft * 100) / 100;
 				
@@ -299,10 +343,10 @@ public class DamnSpam extends Module implements Listener {
 					event.setCancelled(true);
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThis " + btype + " has a damnspam timeout of " + checktime + ", with " + timeLeft + " left."));
 				} else {
-					data.setLastTime(((double) Math.round((double) System.currentTimeMillis() / 10) / 100));
+					data.lastTime = (double) Math.round((double) System.currentTimeMillis() / 10) / 100;
 				}
 				
-				inputs.put(posStr, data.toString());
+				inputs.put(posStr, data);
 			}
 		}
 	}
