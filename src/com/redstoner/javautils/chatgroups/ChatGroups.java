@@ -1,4 +1,4 @@
-package com.redstoner.javautils.chatGroups;
+package com.redstoner.javautils.chatgroups;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.javautils.loginSecurity.LoginSecurity;
+import com.redstoner.javautils.loginsecurity.LoginSecurity;
 import com.redstoner.moduleLoader.Module;
 import com.redstoner.moduleLoader.ModuleLoader;
 

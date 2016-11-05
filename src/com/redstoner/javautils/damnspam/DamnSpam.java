@@ -35,49 +35,38 @@ import com.redstoner.moduleLoader.Module;
 import com.redstoner.moduleLoader.ModuleLoader;
 
 public class DamnSpam extends Module implements Listener {
-
+	
 	@Override
 	public String getDescription() {
 		return "Allows a cooldown on buttons and levers to stop spam.";
 	}
-
+	
 	@Override
 	public String getName() {
 		return "DamnSpam";
 	}
-
+	
 	public String getCmdManagerString() {
-		return "command damnspam {"
-				+ "  [double:seconds] {"
-				+ "    run damnspamSingle seconds;"
-				+ "    help Set single input cooldown for button or lever.;"
-				+ "    type player;"
-				+ "  }"
-				+ "  [double:secondsOff] [double:secondsOn] {"
-				+ "    run damnspamDouble secondsOff secondsOn;"
-				+ "    help Set input cooldown after it's been turned off and turned on (for lever only).;"
-				+ "    type player;"
-				+ "  }"
-				+ "}";
+		return "command damnspam {" + "  [double:seconds] {" + "    run damnspamSingle seconds;" + "    help Set single input cooldown for button or lever.;" + "    type player;" + "  }" + "  [double:secondsOff] [double:secondsOn] {" + "    run damnspamDouble secondsOff secondsOn;" + "    help Set input cooldown after it's been turned off and turned on (for lever only).;" + "    type player;" + "  }" + "}";
 	};
-
+	
 	ModuleLoader loader;
-
+	
 	File configFile;
 	
 	Map<String, SpamInput> inputs;
-
+	
 	boolean changingInput = false;
 	
-	List<Material> acceptedInputs;
-	HashMap<Material, int[][]> attachedBlocks;
-
+	List<Material>				acceptedInputs;
+	HashMap<Material, int[][]>	attachedBlocks;
+	
 	HashMap<Player, SpamInput> players;
-
+	
 	int maxTimeout = 240;
-
+	
 	String timeoutErrorString = "&cThe timeout must be -1 or within 0 and " + maxTimeout;
-
+	
 	@Override
 	public void onEnable() {
 		loader = ModuleLoader.getLoader();
@@ -85,33 +74,33 @@ public class DamnSpam extends Module implements Listener {
 		configFile = new File(loader.getConfigFolder(), "DamnSpam.json");
 		
 		loadInputs();
-
+		
 		acceptedInputs = new ArrayList<Material>();
 		Collections.addAll(acceptedInputs, Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.LEVER);
-
+		
 		attachedBlocks = new HashMap<Material, int[][]>();
-		attachedBlocks.put(Material.LEVER,
-				new int[][] { { 0, 7, 8, 15 }, { 5, 6, 13, 14 }, { 4, 12 }, { 3, 11 }, { 2, 10 }, { 1, 9 } });
-		attachedBlocks.put(Material.STONE_BUTTON,
-				new int[][] { { 0, 8 }, { 5, 6, 7, 13, 14, 15 }, { 4, 12 }, { 3, 11 }, { 2, 10 }, { 1, 9 } });
-		attachedBlocks.put(Material.WOOD_BUTTON,
-				new int[][] { { 0, 8 }, { 5, 6, 7, 13, 14, 15 }, { 4, 12 }, { 3, 11 }, { 2, 10 }, { 1, 9 } });
-
+		attachedBlocks.put(Material.LEVER, new int[][] {{0, 7, 8, 15}, {5, 6, 13, 14}, {4, 12}, {3, 11}, {2, 10},
+				{1, 9}});
+		attachedBlocks.put(Material.STONE_BUTTON, new int[][] {{0, 8}, {5, 6, 7, 13, 14, 15}, {4, 12}, {3, 11}, {2, 10},
+				{1, 9}});
+		attachedBlocks.put(Material.WOOD_BUTTON, new int[][] {{0, 8}, {5, 6, 7, 13, 14, 15}, {4, 12}, {3, 11}, {2, 10},
+				{1, 9}});
+		
 		players = new HashMap<Player, SpamInput>();
 	}
-
+	
 	public void loadInputs() {
 		inputs = new HashMap<String, SpamInput>();
 		try {
 			FileReader reader = new FileReader(configFile);
 			JSONObject json = (JSONObject) new JSONParser().parse(reader);
-			for(Object key : json.keySet()){
+			for (Object key : json.keySet()) {
 				JSONObject inputData = (JSONObject) json.get(key);
 				String uuid = (String) inputData.get("creator");
 				Double timeoutOn = (Double) inputData.get("timeout_on");
 				Double timeoutOff = (Double) inputData.get("timeout_off");
 				Double lastTime = (Double) inputData.get("last_time");
-				inputs.put((String) key,new SpamInput(uuid,timeoutOff,timeoutOn,lastTime));
+				inputs.put((String) key, new SpamInput(uuid, timeoutOff, timeoutOn, lastTime));
 			}
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
@@ -121,7 +110,7 @@ public class DamnSpam extends Module implements Listener {
 	@SuppressWarnings("unchecked")
 	public void saveInputs() {
 		JSONObject json = new JSONObject();
-		for(String key : inputs.keySet()){
+		for (String key : inputs.keySet()) {
 			JSONObject jsonInput = new JSONObject();
 			SpamInput input = inputs.get(key);
 			jsonInput.put("creator", input.player);
@@ -138,36 +127,34 @@ public class DamnSpam extends Module implements Listener {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public String locationString(Location loc) {
 		return loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ();
 	}
-
+	
 	public boolean isAcceptableTimeout(double timeout) {
 		return (timeout > 0 && timeout <= maxTimeout) || timeout == -1;
 	}
-
+	
 	public boolean canBuild(Player player, Block block) {
 		BlockBreakEvent event = new BlockBreakEvent(block, player);
 		Bukkit.getPluginManager().callEvent(event);
 		return !event.isCancelled();
 	}
-
+	
 	@Command(hook = "damnspamSingle")
 	public void damnspam(CommandSender sender, double seconds) {
 		boolean destroyingInput = false;
 		seconds = (double) Math.round(seconds * 100) / 100;
-		if (seconds == 0)
-			destroyingInput = true;
+		if (seconds == 0) destroyingInput = true;
 		else if (!isAcceptableTimeout(seconds)) {
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					"&cThe timeout must be -1 or within 0 and " + maxTimeout));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThe timeout must be -1 or within 0 and " + maxTimeout));
 			return;
 		}
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aPlease click the input you would like to set."));
 		setPlayer((Player) sender, destroyingInput, seconds, seconds);
 	}
-
+	
 	@Command(hook = "damnspamDouble")
 	public void damnspam(CommandSender sender, double secondsOff, double secondsOn) {
 		boolean destroyingInput = false;
@@ -176,14 +163,13 @@ public class DamnSpam extends Module implements Listener {
 		if (secondsOn == 0 && secondsOff == 0) {
 			destroyingInput = true;
 		} else if (!(isAcceptableTimeout(secondsOn) && isAcceptableTimeout(secondsOff))) {
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					"&cThe timeout must be -1 or within 0 and " + maxTimeout));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThe timeout must be -1 or within 0 and " + maxTimeout));
 			return;
 		}
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aPlease click the input you would like to set."));
 		setPlayer((Player) sender, destroyingInput, secondsOff, secondsOn);
 	}
-
+	
 	public void setPlayer(Player player, boolean destroying, double timeoutOff, double timeoutOn) {
 		SpamInput input = null;
 		if (!destroying) {
@@ -191,42 +177,37 @@ public class DamnSpam extends Module implements Listener {
 		}
 		players.put(player, input);
 	}
-
+	
 	public boolean attemptInputRegister(Player player, Block block, Cancellable event) {
 		if (players.containsKey(player)) {
 			if (!acceptedInputs.contains(block.getType())) {
-				player.sendMessage(
-						ChatColor.translateAlternateColorCodes('&', "&cThat block is not an acceptable input!"));
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThat block is not an acceptable input!"));
 				return true;
 			}
-
+			
 			String typeStr = block.getType().toString().toLowerCase().replace("_", " ");
 			String locationStr = locationString(block.getLocation());
-
+			
 			changingInput = true;
 			boolean buildCheck = canBuild(player, block);
 			changingInput = false;
 			
 			if (!buildCheck) {
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-						"&cThere is no timeout to remove on this " + typeStr + "(by setting the timeout to 0)"));
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThere is no timeout to remove on this " + typeStr + "(by setting the timeout to 0)"));
 				return true;
 			}
-
+			
 			SpamInput input = players.get(player);
 			if (input == null) {
 				if (!inputs.containsKey(locationStr)) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-							"&cThere is no timeout to remove on this " + typeStr + "(by setting the timeout to 0)"));
+					player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThere is no timeout to remove on this " + typeStr + "(by setting the timeout to 0)"));
 					return true;
 				}
 				inputs.remove(locationStr);
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-						"&aSuccessfully removed the timeout for this " + typeStr));
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aSuccessfully removed the timeout for this " + typeStr));
 			} else {
 				inputs.put(locationStr, players.get(player));
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-						"&aSuccessfully set a timeout for this " + typeStr));
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aSuccessfully set a timeout for this " + typeStr));
 			}
 			players.remove(player);
 			saveInputs();
@@ -234,27 +215,23 @@ public class DamnSpam extends Module implements Listener {
 		}
 		return false;
 	}
-
+	
 	public void checkBlockBreak(BlockBreakEvent event, Block block) {
-		if (!acceptedInputs.contains(block.getType()))
-			return;
-
+		if (!acceptedInputs.contains(block.getType())) return;
+		
 		String posStr = locationString(block.getLocation());
-		if (!inputs.containsKey(posStr))
-			return;
-
+		if (!inputs.containsKey(posStr)) return;
+		
 		SpamInput input = inputs.get(posStr);
 		
 		Player sender = event.getPlayer();
-
+		
 		String typeStr = block.getType().toString().toLowerCase().replace("_", " ");
-		String inputStr = (block.getLocation().equals(event.getBlock()) ? "this " + typeStr
-				: "the " + typeStr + " attached to that block");
-
+		String inputStr = (block.getLocation().equals(event.getBlock()) ? "this " + typeStr : "the " + typeStr + " attached to that block");
+		
 		if (!sender.isSneaking()) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou cannot destroy " + inputStr));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					"&c&nSneak&c and break or set the timeout to 0 if you want to remove it."));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&nSneak&c and break or set the timeout to 0 if you want to remove it."));
 			event.setCancelled(true);
 			return;
 		}
@@ -262,22 +239,20 @@ public class DamnSpam extends Module implements Listener {
 		if (sender.hasPermission("damnspam.admin") || sender.getUniqueId().toString().equals(input.player)) {
 			inputs.remove(posStr);
 			saveInputs();
-			sender.sendMessage(
-					ChatColor.translateAlternateColorCodes('&', "&aSuccesfully removed " + inputStr));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aSuccesfully removed " + inputStr));
 		} else {
-			sender.sendMessage(
-					ChatColor.translateAlternateColorCodes('&', "&cYou are not allowed to remove " + inputStr));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou are not allowed to remove " + inputStr));
 			event.setCancelled(true);
 		}
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public List<Block> getAttachedBlocks(Block block) {
 		List<Block> blocks = new ArrayList<Block>();
-
-		BlockFace[] directions = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.WEST,
-				BlockFace.EAST };
-
+		
+		BlockFace[] directions = {BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.WEST,
+				BlockFace.EAST};
+		
 		for (int i = 0; i < directions.length; i++) {
 			Block side = block.getRelative(directions[i]);
 			int[][] dvalues = attachedBlocks.get(side.getType());
@@ -289,23 +264,21 @@ public class DamnSpam extends Module implements Listener {
 						break;
 					}
 				}
-
-				if (onSide)
-					blocks.add(side);
+				
+				if (onSide) blocks.add(side);
 			}
 		}
-
+		
 		return blocks;
 	}
-
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBreak(BlockBreakEvent event) {
-		if (changingInput || event.isCancelled())
-			return;
-
+		if (changingInput || event.isCancelled()) return;
+		
 		boolean register = attemptInputRegister(event.getPlayer(), event.getBlock(), event);
 		
-		if(!register) {
+		if (!register) {
 			Block block = event.getBlock();
 			checkBlockBreak(event, block);
 			for (Block affected : getAttachedBlocks(block)) {
@@ -313,12 +286,12 @@ public class DamnSpam extends Module implements Listener {
 			}
 		}
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) {
 		boolean register = attemptInputRegister(event.getPlayer(), event.getClickedBlock(), event);
-
+		
 		if (!register && event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.isCancelled()) {
 			Player sender = event.getPlayer();
 			Block block = event.getClickedBlock();
@@ -327,19 +300,17 @@ public class DamnSpam extends Module implements Listener {
 			if (data != null) {
 				String btype = block.getType().toString().toLowerCase().replace("_", " ");
 				double checktime = 0;
-				if (btype.equals("lever") && block.getData() < 8)
-					checktime = data.timeoutOff;
-				else
-					checktime = data.timeoutOn;
-
+				if (btype.equals("lever") && block.getData() < 8) checktime = data.timeoutOff;
+				else checktime = data.timeoutOn;
+				
 				double timeLeft = (data.lastTime + checktime) - ((double) Math.round((double) System.currentTimeMillis() / 10) / 100);
 				
 				timeLeft = (double) Math.round(timeLeft * 100) / 100;
 				
-				if(checktime == -1){
+				if (checktime == -1) {
 					event.setCancelled(true);
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThis " + btype + " is locked permanently by /damnspam."));
-				} else if(timeLeft > 0){
+				} else if (timeLeft > 0) {
 					event.setCancelled(true);
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThis " + btype + " has a damnspam timeout of " + checktime + ", with " + timeLeft + " left."));
 				} else {
@@ -350,5 +321,5 @@ public class DamnSpam extends Module implements Listener {
 			}
 		}
 	}
-
+	
 }

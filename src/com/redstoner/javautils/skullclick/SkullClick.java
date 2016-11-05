@@ -1,4 +1,4 @@
-package com.redstoner.javautils.skullClick;
+package com.redstoner.javautils.skullclick;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
@@ -15,7 +15,7 @@ public class SkullClick extends Module implements Listener {
 	public String getName() {
 		return "SkullClick";
 	}
-
+	
 	@Override
 	public String getDescription() {
 		return "Shows a skull's owner when it is right clicked";

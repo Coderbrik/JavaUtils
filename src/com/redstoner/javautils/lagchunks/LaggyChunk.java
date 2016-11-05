@@ -1,10 +1,10 @@
-package com.redstoner.javautils.lagChunks;
+package com.redstoner.javautils.lagchunks;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 
 public class LaggyChunk {
-	public final int x, y, z, amount;
+	public final int	x, y, z, amount;
 	public final World	world;
 	
 	public LaggyChunk(int x, int y, int z, World world, int amount) {

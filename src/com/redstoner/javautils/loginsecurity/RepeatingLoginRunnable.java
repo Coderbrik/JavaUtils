@@ -1,13 +1,13 @@
-package com.redstoner.javautils.loginSecurity;
+package com.redstoner.javautils.loginsecurity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class RepeatingLoginRunnable implements Runnable {
-	private int id = -1;
-	private Player player;
-	private LoginSecurity mainClass;
+	private int				id	= -1;
+	private Player			player;
+	private LoginSecurity	mainClass;
 	
 	public RepeatingLoginRunnable(LoginSecurity mainClass, Player player) {
 		this.player = player;

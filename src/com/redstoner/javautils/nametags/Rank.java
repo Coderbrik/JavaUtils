@@ -1,4 +1,4 @@
-package com.redstoner.javautils.nameTags;
+package com.redstoner.javautils.nametags;
 
 public enum Rank {
 	VISITOR, MEMBER, BUILDER, TRUSTED, TRAININGMOD, MOD, ADMIN;

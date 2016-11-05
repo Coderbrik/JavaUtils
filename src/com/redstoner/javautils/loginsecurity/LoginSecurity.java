@@ -1,4 +1,4 @@
-package com.redstoner.javautils.loginSecurity;
+package com.redstoner.javautils.loginsecurity;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;

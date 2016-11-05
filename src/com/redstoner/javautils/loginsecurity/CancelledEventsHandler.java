@@ -1,4 +1,4 @@
-package com.redstoner.javautils.loginSecurity;
+package com.redstoner.javautils.loginsecurity;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

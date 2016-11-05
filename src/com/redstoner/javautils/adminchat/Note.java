@@ -11,9 +11,9 @@ public class Note {
 	
 	public static List<Note> notes = new ArrayList<>();
 	
-	private final String note;
-	private final UUID creator;
-	private final long timestamp;
+	private final String	note;
+	private final UUID		creator;
+	private final long		timestamp;
 	
 	public Note(String note, Player creator) {
 		this.note = note;

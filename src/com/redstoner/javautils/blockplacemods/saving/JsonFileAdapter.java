@@ -11,62 +11,65 @@ import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
 public class JsonFileAdapter<T> {
-
-    private final Type typeOfT;
-    private final Gson gson;
-    private final Consumer<Throwable> onErrorLoad;
-    private final Consumer<Throwable> onErrorSave;
-
-    public JsonFileAdapter(TypeToken<T> typeOfT, Gson gson, Consumer<Throwable> onErrorLoad, Consumer<Throwable> onErrorSave) {
-        this.typeOfT = typeOfT.getType();
-        this.gson = gson;
-        this.onErrorLoad = onErrorLoad != null ? onErrorLoad : t -> {};
-        this.onErrorSave = onErrorSave != null ? onErrorSave : t -> {};
-    }
-
-    public void save(T object, File file) {
-        PrintWriter writer = null;
-
-        try {
-            if (!file.exists()) file.createNewFile();
-            writer = new PrintWriter(file);
-            String json = gson.toJson(object);
-            writer.write(json);
-        } catch (Throwable t) {
-            onErrorSave.accept(t);
-        } finally {
-            if (writer != null) writer.close();
-        }
-    }
-
-    public void save(T object, String filename) {
-        save(object, new File(filename));
-    }
-
-    public T load(final File file) {
-        if (!file.exists()) {
-            return null;
-        }
-
-        FileReader reader = null;
-        T result = null;
-        try {
-            reader = new FileReader(file);
-            result = gson.fromJson(reader, typeOfT);
-        } catch (Throwable t) {
-            onErrorLoad.accept(t);
-            return null;
-        } finally {
-            if (reader != null) try {
-                reader.close();
-            } catch (IOException ignored) {}
-        }
-
-        return result;
-    }
-
-    public T load(String filename) {
-        return load(new File(filename));
-    }
-
+	
+	private final Type					typeOfT;
+	private final Gson					gson;
+	private final Consumer<Throwable>	onErrorLoad;
+	private final Consumer<Throwable>	onErrorSave;
+	
+	public JsonFileAdapter(TypeToken<T> typeOfT, Gson gson, Consumer<Throwable> onErrorLoad, Consumer<Throwable> onErrorSave) {
+		this.typeOfT = typeOfT.getType();
+		this.gson = gson;
+		this.onErrorLoad = onErrorLoad != null ? onErrorLoad : t -> {
+		};
+		this.onErrorSave = onErrorSave != null ? onErrorSave : t -> {
+		};
+	}
+	
+	public void save(T object, File file) {
+		PrintWriter writer = null;
+		
+		try {
+			if (!file.exists()) file.createNewFile();
+			writer = new PrintWriter(file);
+			String json = gson.toJson(object);
+			writer.write(json);
+		} catch (Throwable t) {
+			onErrorSave.accept(t);
+		} finally {
+			if (writer != null) writer.close();
+		}
+	}
+	
+	public void save(T object, String filename) {
+		save(object, new File(filename));
+	}
+	
+	public T load(final File file) {
+		if (!file.exists()) {
+			return null;
+		}
+		
+		FileReader reader = null;
+		T result = null;
+		try {
+			reader = new FileReader(file);
+			result = gson.fromJson(reader, typeOfT);
+		} catch (Throwable t) {
+			onErrorLoad.accept(t);
+			return null;
+		} finally {
+			if (reader != null) try {
+				reader.close();
+			} catch (IOException ignored) {
+			}
+		}
+		
+		return result;
+	}
+	
+	public T load(String filename) {
+		return load(new File(filename));
+	}
+	
 }

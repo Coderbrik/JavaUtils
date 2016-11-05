@@ -1,4 +1,4 @@
-package com.redstoner.javautils.nameTags;
+package com.redstoner.javautils.nametags;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

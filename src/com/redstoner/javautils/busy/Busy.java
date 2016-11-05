@@ -16,43 +16,20 @@ import com.redstoner.moduleLoader.Module;
 
 public class Busy extends Module implements Listener {
 	
-	private List<Player> busy = new ArrayList<>();
-	private Map<Player, String> targets = new HashMap<>();
-	private String[] aliases = {"emsg", "msg", "tell", "etell", "w", "ew", "t", "et", "pm", "epm", "m", "whisper", "ewhisper"};
-	private String[] replyAliases = {"r", "er", "reply", "ereply"};
+	private List<Player>		busy			= new ArrayList<>();
+	private Map<Player, String>	targets			= new HashMap<>();
+	private String[]			aliases			= {"emsg", "msg", "tell", "etell", "w", "ew", "t", "et", "pm", "epm",
+			"m", "whisper", "ewhisper"};
+	private String[]			replyAliases	= {"r", "er", "reply", "ereply"};
 	
 	@Override
 	public void onEnable() {
-
+		
 	}
 	
 	@Override
 	public String getCmdManagerString() {
-		return "command busy {"
-			+ "perm utils.imbusy;"
-			+ "on {"
-			+ "	type player;"
-			+ "	perm utils.imbusy.use;"
-			+ "	run busy_on;"
-			+ "	help Toggles your busy status on;"
-			+ "}"
-			+ "off {"
-			+ "	type player;"
-			+ "	perm utils.imbusy.use;"
-			+ "	run busy_off;"
-			+ "	help Toggles your busy status off;"
-			+ "}"
-			+ "toggle {"
-			+ "	type player;"
-			+ "	perm utils.imbusy.use;"
-			+ "	run busy_toggle;"
-			+ "	help Toggles your busy status;"
-			+ "}"
-			+ "status [string:player] {"
-			+ "	help Checks whether a player is busy;"
-			+ "	run busy_status player;"
-			+ "}"
-		+ "}";
+		return "command busy {" + "perm utils.imbusy;" + "on {" + "	type player;" + "	perm utils.imbusy.use;" + "	run busy_on;" + "	help Toggles your busy status on;" + "}" + "off {" + "	type player;" + "	perm utils.imbusy.use;" + "	run busy_off;" + "	help Toggles your busy status off;" + "}" + "toggle {" + "	type player;" + "	perm utils.imbusy.use;" + "	run busy_toggle;" + "	help Toggles your busy status;" + "}" + "status [string:player] {" + "	help Checks whether a player is busy;" + "	run busy_status player;" + "}" + "}";
 	}
 	
 	@Command(hook = "busy_toggle")
@@ -132,7 +109,7 @@ public class Busy extends Module implements Listener {
 		}
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (player.getName().toLowerCase().contains(args[1].toLowerCase())) {
-				targets.put(e.getPlayer(), args[1].toLowerCase());		
+				targets.put(e.getPlayer(), args[1].toLowerCase());
 			}
 		}
 		for (Player p : busy) {
@@ -145,19 +122,16 @@ public class Busy extends Module implements Listener {
 	}
 	
 	@Override
-	public void onDisable() {
-	}
-
+	public void onDisable() {}
+	
 	@Override
 	public String getName() {
 		return "Busy";
 	}
-
+	
 	@Override
 	public String getDescription() {
 		return "Allows you to set a busy state, which can disable private messages";
 	}
-	
-	
 	
 }
