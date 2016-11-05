@@ -63,11 +63,11 @@ public class DamnSpam extends Module implements Listener {
 
 	ModuleLoader loader;
 
-	Map<String, SpamInput> inputs;
-	
 	File configFile;
+	
+	Map<String, SpamInput> inputs;
 
-	boolean removingInput = false;
+	boolean changingInput = false;
 	
 	List<Material> acceptedInputs;
 	HashMap<Material, int[][]> attachedBlocks;
@@ -81,7 +81,7 @@ public class DamnSpam extends Module implements Listener {
 	@Override
 	public void onEnable() {
 		loader = ModuleLoader.getLoader();
-
+		
 		configFile = new File(loader.getConfigFolder(), "DamnSpam.json");
 		
 		loadInputs();
@@ -203,9 +203,9 @@ public class DamnSpam extends Module implements Listener {
 			String typeStr = block.getType().toString().toLowerCase().replace("_", " ");
 			String locationStr = locationString(block.getLocation());
 
-			removingInput = true;
+			changingInput = true;
 			boolean buildCheck = canBuild(player, block);
-			removingInput = false;
+			changingInput = false;
 			
 			if (!buildCheck) {
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
@@ -243,6 +243,8 @@ public class DamnSpam extends Module implements Listener {
 		if (!inputs.containsKey(posStr))
 			return;
 
+		SpamInput input = inputs.get(posStr);
+		
 		Player sender = event.getPlayer();
 
 		String typeStr = block.getType().toString().toLowerCase().replace("_", " ");
@@ -256,12 +258,8 @@ public class DamnSpam extends Module implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
-		removingInput = true;
-		boolean success = canBuild(sender, block);
-		removingInput = false;
 		
-		if (success) {
+		if (sender.hasPermission("damnspam.admin") || sender.getUniqueId().toString().equals(input.player)) {
 			inputs.remove(posStr);
 			saveInputs();
 			sender.sendMessage(
@@ -302,7 +300,7 @@ public class DamnSpam extends Module implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBreak(BlockBreakEvent event) {
-		if (removingInput || event.isCancelled())
+		if (changingInput || event.isCancelled())
 			return;
 
 		boolean register = attemptInputRegister(event.getPlayer(), event.getBlock(), event);
@@ -345,7 +343,7 @@ public class DamnSpam extends Module implements Listener {
 					event.setCancelled(true);
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThis " + btype + " has a damnspam timeout of " + checktime + ", with " + timeLeft + " left."));
 				} else {
-					data.lastTime = ((double) Math.round((double) System.currentTimeMillis() / 10) / 100);
+					data.lastTime = (double) Math.round((double) System.currentTimeMillis() / 10) / 100;
 				}
 				
 				inputs.put(posStr, data);
