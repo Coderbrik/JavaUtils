@@ -1,4 +1,4 @@
-package com.redstoner.javautils.adminchat;
+package com.redstoner.javautils.adminnotes;
 
 import java.util.ArrayList;
 import java.util.Calendar;

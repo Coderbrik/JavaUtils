@@ -46,9 +46,24 @@ public class DamnSpam extends Module implements Listener {
 		return "DamnSpam";
 	}
 	
+	//@formatter:off
 	public String getCmdManagerString() {
-		return "command damnspam {" + "  [double:seconds] {" + "    run damnspamSingle seconds;" + "    help Set single input cooldown for button or lever.;" + "    type player;" + "  }" + "  [double:secondsOff] [double:secondsOn] {" + "    run damnspamDouble secondsOff secondsOn;" + "    help Set input cooldown after it's been turned off and turned on (for lever only).;" + "    type player;" + "  }" + "}";
+		return
+		"command damnspam {"
+			+ "[double:seconds] {"
+				+ "run damnspamSingle seconds;"
+				+ "help Set single input cooldown for button or lever.;"
+				+ "type player;"
+			+ "}"
+			
+			+ "[double:secondsOff] [double:secondsOn] {"
+				+ "run damnspamDouble secondsOff secondsOn;"
+				+ "help Set input cooldown after it's been turned off and turned on (for lever only).;"
+				+ "type player;"
+			+ "}"
+		+ "}";
 	};
+	//@formatter:on
 	
 	ModuleLoader loader;
 	
@@ -79,12 +94,9 @@ public class DamnSpam extends Module implements Listener {
 		Collections.addAll(acceptedInputs, Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.LEVER);
 		
 		attachedBlocks = new HashMap<Material, int[][]>();
-		attachedBlocks.put(Material.LEVER, new int[][] {{0, 7, 8, 15}, {5, 6, 13, 14}, {4, 12}, {3, 11}, {2, 10},
-				{1, 9}});
-		attachedBlocks.put(Material.STONE_BUTTON, new int[][] {{0, 8}, {5, 6, 7, 13, 14, 15}, {4, 12}, {3, 11}, {2, 10},
-				{1, 9}});
-		attachedBlocks.put(Material.WOOD_BUTTON, new int[][] {{0, 8}, {5, 6, 7, 13, 14, 15}, {4, 12}, {3, 11}, {2, 10},
-				{1, 9}});
+		attachedBlocks.put(Material.LEVER, new int[][] {{0, 7, 8, 15}, {5, 6, 13, 14}, {4, 12}, {3, 11}, {2, 10}, {1, 9}});
+		attachedBlocks.put(Material.STONE_BUTTON, new int[][] {{0, 8}, {5, 6, 7, 13, 14, 15}, {4, 12}, {3, 11}, {2, 10}, {1, 9}});
+		attachedBlocks.put(Material.WOOD_BUTTON, new int[][] {{0, 8}, {5, 6, 7, 13, 14, 15}, {4, 12}, {3, 11}, {2, 10}, {1, 9}});
 		
 		players = new HashMap<Player, SpamInput>();
 	}
@@ -250,8 +262,7 @@ public class DamnSpam extends Module implements Listener {
 	public List<Block> getAttachedBlocks(Block block) {
 		List<Block> blocks = new ArrayList<Block>();
 		
-		BlockFace[] directions = {BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.WEST,
-				BlockFace.EAST};
+		BlockFace[] directions = {BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.WEST, BlockFace.EAST};
 		
 		for (int i = 0; i < directions.length; i++) {
 			Block side = block.getRelative(directions[i]);

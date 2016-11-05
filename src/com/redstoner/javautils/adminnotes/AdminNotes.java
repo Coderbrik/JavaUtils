@@ -16,7 +16,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.json.simple.parser.ParseException;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.javautils.adminchat.Note;
 import com.redstoner.moduleLoader.Module;
 import com.redstoner.moduleLoader.ModuleLoader;
 
@@ -104,9 +103,29 @@ public class AdminNotes extends Module implements Listener {
 		}
 	}
 	
+	//@formatter:off
 	@Override
 	public String getCmdManagerString() {
-		return "command an {" + "	perm utils.adminnotes;" + "	add [string:note...] {" + "		type player;" + "		help Creates a new admin note;" + "		run an_create note;" + "	}" + "	del [int:id] {" + "		help Deletes an admin note;" + "		run an_del id;" + "	}" + "	list {" + "		help Lists all notes;" + "		run an_list;" + "	}" + "}";
+		return
+		"command an {"
+			+ "perm utils.adminnotes;"
+			
+			+ "add [string:note...] {"
+				+ "type player;"
+				+ "help Creates a new admin note;"
+				+ "run an_create note;"
+			+ "}"
+			
+			+ "del [int:id] {"
+				+ "help Deletes an admin note;"
+				+ "run an_del id;"
+			+ "}"
+			
+			+ "list {"
+				+ "help Lists all notes;"
+				+ "run an_list;"
+			+ "}"
+		+ "}";
 	}
-	
+	//@formatter:on
 }
