@@ -155,7 +155,7 @@ public class Check extends Module implements Listener {
 	 */
 	public Object[] getWebsiteData(OfflinePlayer player) {
 		Object[] results = (Object[]) table.get("`id`, `email`, `confirmed`", new MysqlConstraint("uuid", ConstraintOperator.EQUAL, player.getUniqueId().toString().replace("-", "")))[0];
-		return (results == null) ? new Object[] { null, null, false } : new Object[] { "http://redstoner.com/users/" + results[0], results[1], ((int) results[2] == 0) ? false : true };
+		return (results == null) ? new Object[] { null, null, false } : new Object[] { "http://redstoner.com/users/" + results[0], results[1], (int) results[2] > 0};
 	}
 	/*
 	 * 
