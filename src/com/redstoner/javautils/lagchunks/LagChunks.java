@@ -69,29 +69,4 @@ public class LagChunks extends Module {
 			player.sendMessage("§4Invalid chunk number! Use §e/lc list §4 to show laggy chunks!");
 		}
 	}
-	
-	//@formatter:off - turns off formatter (has to be a comment)
-	@Override
-	public String getCmdManagerString() {
-		return
-			"command lc {"
-				+ "list {"
-					+ "run list_cmd;"
-					+ "help re-lists already scanned chunks;"
-				+ "}"
-				
-				+ "[int:amount] {"
-					+ "run scan_cmd amount;"
-					+ "help scans for laggy chunks;"
-				+ "}"
-				
-				+ "tp [int:number] {"
-					+ "run tp number;"
-					+ "help teleports to the specified chunk;"
-					+ "type player;"
-				+ "}"
-			+ "}";
-	}
-	//@formatter:on - turns on formatter (has to be a comment)
-	
 }

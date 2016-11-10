@@ -46,25 +46,6 @@ public class DamnSpam extends Module implements Listener {
 		return "DamnSpam";
 	}
 	
-	//@formatter:off
-	public String getCmdManagerString() {
-		return
-		"command damnspam {"
-			+ "[double:seconds] {"
-				+ "run damnspamSingle seconds;"
-				+ "help Set single input cooldown for button or lever.;"
-				+ "type player;"
-			+ "}"
-			
-			+ "[double:secondsOff] [double:secondsOn] {"
-				+ "run damnspamDouble secondsOff secondsOn;"
-				+ "help Set input cooldown after it's been turned off and turned on (for lever only).;"
-				+ "type player;"
-			+ "}"
-		+ "}";
-	};
-	//@formatter:on
-	
 	ModuleLoader loader;
 	
 	File configFile;

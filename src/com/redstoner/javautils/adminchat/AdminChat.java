@@ -117,27 +117,4 @@ public class AdminChat extends Module implements Listener {
 		player.sendMessage(ChatColor.GREEN + "AdminChat key set to " + key + "!");
 		keys.put(player.getUniqueId(), acKey);
 	}
-	
-	//@formatter:off
-	@Override
-	public String getCmdManagerString() {
-		return
-		"command ac {"
-			+ "[string:message...] {"
-				+ "help Sends a message in Admin Chat;"
-				+ "perm utils.ac;"
-				+ "run ac_msg message;"
-			+ "}"
-		+ "}"
-		
-		+ "command ackey {"
-			+ "[string:key] {"
-				+ "help Sets your Admin Chat key;"
-				+ "perm utils.ac;"
-				+ "type player;"
-				+ "run ackey key;"
-			+ "}"
-		+ "}";
-	}
-	//@formatter:on
 }

@@ -67,19 +67,6 @@ public class Check extends Module implements Listener {
 		
 	}
 	
-	// @formatter:off
-	@Override
-	public String getCmdManagerString() {
-		return "command check {"
-				+ "  [string:player] {"
-				+ "    run checkCommand player;"
-				+ "    help Get info on a player;"
-				+ "    perm utils.check;"
-				+ "  }"
-				+ "}";
-	}
-	// @formatter:on
-	
 	@SuppressWarnings("deprecation")
 	@Command(hook = "checkCommand")
 	public void checkCommand(final CommandSender sender, final String player) {
