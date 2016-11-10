@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.event.Listener;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -67,10 +66,10 @@ public class Check extends Module implements Listener {
 		}
 
 	}
-
+	
+	// @formatter:off
 	@Override
 	public String getCmdManagerString() {
-		// @formatter:off
 		return "command check {"
 				+ "  [string:player] {"
 				+ "    run checkCommand player;"
@@ -78,8 +77,8 @@ public class Check extends Module implements Listener {
 				+ "    perm utils.check;"
 				+ "  }"
 				+ "}";
-		// @formatter:on
 	}
+	// @formatter:on
 
 	@SuppressWarnings("deprecation")
 	@Command(hook = "checkCommand")
@@ -120,10 +119,21 @@ public class Check extends Module implements Listener {
 	}
 
 	public JSONObject getIpInfo(OfflinePlayer player) {
-		if (!player.isOnline())
-			return null;
+		String ip = "";
+		
+		if (player.isOnline()) {
+			ip = player.getPlayer().getAddress().getHostString();
+		} else {
+			try {
+				ip = (String) table.get("last_ip", new MysqlConstraint("uuid", ConstraintOperator.EQUAL, player.getUniqueId().toString().replace("-", "")))[0];
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
 		try {
-			URL ipinfo = new URL("http://ipinfo.io/" + ((CraftPlayer) player).getAddress().getAddress().toString() + "/json");
+			URL ipinfo = new URL("http://ipinfo.io/" + ip + "/json");
 
 			String rawJson = read(ipinfo);
 
@@ -131,6 +141,7 @@ public class Check extends Module implements Listener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 
@@ -148,20 +159,19 @@ public class Check extends Module implements Listener {
 		return format.format(date);
 	}
 
-	/*
-	 * 
-	 * WEBSITE DATA NOT TESTED.
-	 * 
-	 */
 	public Object[] getWebsiteData(OfflinePlayer player) {
-		Object[] results = (Object[]) table.get("`id`, `email`, `confirmed`", new MysqlConstraint("uuid", ConstraintOperator.EQUAL, player.getUniqueId().toString().replace("-", "")))[0];
-		return (results == null) ? new Object[] { null, null, false } : new Object[] { "http://redstoner.com/users/" + results[0], results[1], (int) results[2] > 0};
+		MysqlConstraint constraint = new MysqlConstraint("uuid", ConstraintOperator.EQUAL, player.getUniqueId().toString().replace("-", ""));
+		
+		try {
+			int id = (int) table.get("id", constraint)[0];
+			String email = (String) table.get("email", constraint)[0];
+			boolean confirmed = (boolean) table.get("confirmed", constraint)[0];
+			
+			return new Object[] {"https://redstoner.com/users/" + id, email, confirmed};
+		} catch (Exception e) {
+			return new Object[] {null};
+		}
 	}
-	/*
-	 * 
-	 * WEBSITE DATA NOT TESTED.
-	 * 
-	 */
 
 	public String getCountry(JSONObject data) {
 		return (String) data.get("country");
@@ -179,7 +189,7 @@ public class Check extends Module implements Listener {
 				nameString += ((JSONObject) obj).get("name") + ", ";
 			}
 
-			nameString = nameString.substring(0, nameString.length() - 1);
+			nameString = nameString.substring(0, nameString.length() - 2);
 
 			return nameString;
 		} catch (MalformedURLException | ParseException e) {
@@ -193,20 +203,29 @@ public class Check extends Module implements Listener {
 	}
 
 	public void getAllData(CommandSender sender, OfflinePlayer player) {
-		JSONObject data = getIpInfo(player);
+		JSONObject ipInfo = getIpInfo(player);
 
 		try {
 			msg(sender, "&7   -- Data provided by Redstoner");
 			msg(sender, "&6>  UUID: &e" + player.getUniqueId());
 			msg(sender, "&6>  First joined: &7(y-m-d h:m:s) &e" + getFirstJoin(player));
 			msg(sender, "&6>  Last seen: &7(y-m-d h:m:s) &e" + getLastSeen(player));
-			Object[] website = getWebsiteData(player);
-			msg(sender, "&6> Website account: &e" + website[0]);
-			msg(sender, "&6> email: &e" + website[1]);
-			if (!((boolean) website[2]))
-				msg(sender, "&6> &cEmail NOT Confirmed!");
-			msg(sender, "&7   -- Data provided by ipinfo.io");
-			msg(sender, "&6>  Country: &e" + getCountry(data));
+			
+			Object[] websiteData = getWebsiteData(player);
+			
+			if (websiteData[0] != null) {
+				msg(sender, "&6> Website account: &e" + websiteData[0]);
+				msg(sender, "&6> email: &e" + websiteData[1]);
+				if (!((boolean) websiteData[2])) {
+					msg(sender, "&6> &4Email NOT Confirmed!");
+				}
+			}
+			
+			if (ipInfo != null) {
+				msg(sender, "&7   -- Data provided by ipinfo.io");
+				msg(sender, "&6>  Country: &e" + getCountry(ipInfo));
+			}
+			
 			msg(sender, "&7   -- Data provided by Mojang");
 			msg(sender, "&6>  All ingame names used so far: &e" + getAllNames(player));
 		} catch (Exception e) {
