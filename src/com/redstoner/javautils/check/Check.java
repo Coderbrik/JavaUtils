@@ -83,7 +83,7 @@ public class Check extends Module implements Listener {
 	@SuppressWarnings("deprecation")
 	@Command(hook = "checkCommand")
 	public void checkCommand(final CommandSender sender, final String player) {
-		sendHeader(sender);
+		msg(sender, "\n&2--=[ Check ]=--");
 		msg(sender, "&7Please notice that the data may not be fully accurate!");
 		OfflinePlayer oPlayer = Bukkit.getServer().getOfflinePlayer(player);
 
@@ -91,7 +91,7 @@ public class Check extends Module implements Listener {
 
 			@Override
 			public void run() {
-				getAllData(sender, oPlayer);
+				sendData(sender, oPlayer);
 			}
 
 		});
@@ -202,40 +202,44 @@ public class Check extends Module implements Listener {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 	}
 
-	public void getAllData(CommandSender sender, OfflinePlayer player) {
+	public void sendData(CommandSender sender, OfflinePlayer player) {
 		JSONObject ipInfo = getIpInfo(player);
 
 		try {
-			msg(sender, "&7   -- Data provided by Redstoner");
-			msg(sender, "&6>  UUID: &e" + player.getUniqueId());
-			msg(sender, "&6>  First joined: &7(y-m-d h:m:s) &e" + getFirstJoin(player));
-			msg(sender, "&6>  Last seen: &7(y-m-d h:m:s) &e" + getLastSeen(player));
+			//data
+			String firstJoin = getFirstJoin(player);
+			String lastSeen = getFirstJoin(player);
+			firstJoin = (firstJoin.equals("1970-1-1 1:0")) ? "&eNever" : "&7(y-m-d h:m:s) &e" + firstJoin;
+			lastSeen = (lastSeen.equals("1970-1-1 1:0")) ? "&eNever" : "&7(y-m-d h:m:s) &e" + lastSeen;
 			
 			Object[] websiteData = getWebsiteData(player);
+			String websiteUrl = (websiteData[0] == null) ? "None" : (String) websiteData[0];
+			String email = (websiteData[0] == null) ? "Unknown" : (String) websiteData[1];
+			boolean emailNotConfirmed = (websiteData[0] == null) ? false : !((boolean) websiteData[2]);
 			
-			if (websiteData[0] != null) {
-				msg(sender, "&6> Website account: &e" + websiteData[0]);
-				msg(sender, "&6> email: &e" + websiteData[1]);
-				if (!((boolean) websiteData[2])) {
-					msg(sender, "&6> &4Email NOT Confirmed!");
-				}
-			}
+			String country = (ipInfo == null) ? "Unknown" : getCountry(ipInfo);
 			
-			if (ipInfo != null) {
-				msg(sender, "&7   -- Data provided by ipinfo.io");
-				msg(sender, "&6>  Country: &e" + getCountry(ipInfo));
-			}
+			String namesUsed = getAllNames(player);
+			if (namesUsed == null) namesUsed = "None";
 			
-			msg(sender, "&7   -- Data provided by Mojang");
-			msg(sender, "&6>  All ingame names used so far: &e" + getAllNames(player));
+			//messages
+			msg(sender, "&7Data provided by Redstoner:");
+			msg(sender, "&6>  UUID: &e" + player.getUniqueId());
+			msg(sender, "&6>  First joined: " + firstJoin);
+			msg(sender, "&6>  Last seen: " + lastSeen);
+			
+			msg(sender, "&6>  Website account: &e" + websiteUrl);
+			msg(sender, "&6>  email: &e" + email);
+			if (emailNotConfirmed) msg(sender, "&6> &4Email NOT Confirmed!");
+			
+			msg(sender, "&7Data provided by ipinfo:");
+			msg(sender, "&6>  Country: &e" + country);
+			
+			msg(sender, "&7Data provided by Mojang:");
+			msg(sender, "&6>  All ingame names used so far: &e" + namesUsed);
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg(sender, "&cSorry, something went wrong while fetching data");
 		}
 	}
-
-	public void sendHeader(CommandSender sender) {
-		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "\n&2--=[ Check ]=--"));
-	}
-
 }
