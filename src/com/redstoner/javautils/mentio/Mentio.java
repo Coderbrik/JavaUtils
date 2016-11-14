@@ -115,6 +115,16 @@ public class Mentio extends Module implements Listener {
 		}
 	}
 	
+	private String findAllColors(String s) {
+		String colors = "";
+		
+		for (int i = s.indexOf("§"); i >= 0; i = s.indexOf("§", i + 1)) {
+			colors += "§" + s.charAt(i + 1);
+		}
+		
+		return colors;
+	}
+	
 	@Command(hook = "addWord")
 	public void addWord(CommandSender sender, String word) {
 		Player player = (Player) sender;
@@ -230,21 +240,15 @@ public class Mentio extends Module implements Listener {
 					
 					if (word.toLowerCase().contains(listenWord.toLowerCase())) {
 						isMentioned = true;
-						String lastColor = "";
+						String formatting = "";
 						
 						for (int j = 0; j <= words.indexOf(word); j++) {
-							lastColor += words.get(j);
+							formatting += words.get(j);
 						}
 						
-						int lastIndex = lastColor.lastIndexOf(ChatColor.COLOR_CHAR);
+						formatting = findAllColors(formatting);
 						
-						if (lastIndex == -1) {
-							lastColor = "f";
-						} else {
-							lastColor = lastColor.substring(lastIndex, lastIndex + 1);
-						}
-						
-						wordsCopy.set(i, ChatColor.GREEN + ChatColor.stripColor(word) + ChatColor.COLOR_CHAR + lastColor);
+						wordsCopy.set(i, ChatColor.GREEN + "" + ChatColor.ITALIC + ChatColor.stripColor(word) + formatting);
 					}
 				}
 			}
@@ -253,6 +257,7 @@ public class Mentio extends Module implements Listener {
 				try {
 					e.getRecipients().remove(recipient);
 				} catch (UnsupportedOperationException ex) {
+					ex.printStackTrace();
 					continue;
 				}
 				
