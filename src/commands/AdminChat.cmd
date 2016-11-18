@@ -14,3 +14,11 @@ command ackey {
 		run ackey key;
 	}
 }
+
+command act {
+	[string:not] {
+		help toggles Admin Chat;
+		perm utils.ac;
+		run act not;
+	}
+}
