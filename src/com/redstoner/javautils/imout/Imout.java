@@ -16,13 +16,11 @@ public class Imout extends Module{
 	List<String> imout_toggle_list = new ArrayList<String>();
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
 		return "Adds /imout, displays fake leave/join messages";
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "Imout";
 	}
 	
