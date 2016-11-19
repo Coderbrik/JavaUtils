@@ -31,7 +31,7 @@ import com.redstoner.moduleLoader.Module;
 import com.redstoner.moduleLoader.ModuleLoader;
 
 public class Mentio extends Module implements Listener {
-	private Map<String, String[]> mentions;
+	private Map<String, List<String>> mentions;
 	private File configFile;
 	
 	@Override
@@ -75,13 +75,13 @@ public class Mentio extends Module implements Listener {
 			
 			for (Object key : json.keySet()) {
 				JSONArray mentionsJSONArray = (JSONArray) json.get(key);
-				List<String> mentionsArray = new ArrayList<>();
+				List<String> mentionsArray = new ArrayList<String>();
 				
-				for (Object o : mentionsJSONArray.toArray()) {
-					mentionsArray.add(o.toString());
+				for (Object obj : mentionsJSONArray.toArray()) {
+					mentionsArray.add(obj.toString());
 				}
 				
-				mentions.put((String) key, mentionsArray.toArray(new String[0]));
+				mentions.put((String) key, mentionsArray);
 			}
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
@@ -129,34 +129,37 @@ public class Mentio extends Module implements Listener {
 		return colors;
 	}
 	
+	private String getDisplayNameWithoutSuffix(Player player) {
+		return ChatColor.stripColor(player.getDisplayName().toLowerCase()).replaceAll("\\$", "").replaceAll("•", "").trim();
+	}
+	
 	@Command(hook = "addWord")
 	public void addWord(CommandSender sender, String word) {
 		Player player = (Player) sender;
 		String uuid = player.getUniqueId().toString();
-		List<String> newMentions = new ArrayList<>();
-		String[] playerMentions = mentions.get(uuid);
-		String[] oldMentions = new String[0];
+		List<String> playerMentions = mentions.get(uuid);
 		
-		if (playerMentions != null) {
-			oldMentions = playerMentions.clone();
-			newMentions = Arrays.asList(playerMentions);
-		}
+		List<String> oldMentions = new ArrayList<String>();
+		List<String> newMentions = new ArrayList<String>();
 		
-		if (newMentions.size() == 0) {
+		if (playerMentions == null) {
 			newMentions.add(player.getName().toLowerCase());
-			newMentions.add(player.getDisplayName().toLowerCase());
+			newMentions.add(getDisplayNameWithoutSuffix(player));
+		} else {
+			oldMentions.addAll(playerMentions);
+			newMentions.addAll(playerMentions);
 		}
 		
 		newMentions.add(word.toLowerCase());
-		mentions.put(uuid, newMentions.toArray(new String[0]));
+		mentions.put(uuid, newMentions);
 		
 		if (!saveMentions()) {
 			player.sendMessage(ChatColor.RED + "Could not save mentions! Please contact an admin!");
 			
-			if (oldMentions.length > 0) {
-				mentions.put(uuid, oldMentions);
-			} else {
+			if (playerMentions == null) {
 				mentions.remove(uuid);
+			} else {
+				mentions.put(uuid, oldMentions);
 			}
 			
 			return;
@@ -169,30 +172,34 @@ public class Mentio extends Module implements Listener {
 	public void delWord(CommandSender sender, String word) {
 		Player player = (Player) sender;
 		String uuid = player.getUniqueId().toString();
-		List<String> newMentions = new ArrayList<>();
-		String[] playerMentions = mentions.get(uuid);
-		String[] oldMentions = new String[0];
+		List<String> playerMentions = mentions.get(uuid);
 		
-		if (playerMentions != null) {
-			oldMentions = playerMentions.clone();
-			newMentions = Arrays.asList(playerMentions);
+		List<String> oldMentions = new ArrayList<String>();
+		List<String> newMentions = new ArrayList<String>();
+		
+		if (playerMentions == null) {
+			newMentions.add(player.getName().toLowerCase());
+			newMentions.add(getDisplayNameWithoutSuffix(player));
+		} else {
+			oldMentions.addAll(playerMentions);
+			newMentions.addAll(playerMentions);
 		}
 		
-		if (!newMentions.contains(word.toLowerCase())) {
+		if (!oldMentions.contains(word.toLowerCase())) {
 			player.sendMessage(ChatColor.RED + "You do not have \"" + word + "\" added as a mention!");
 			return;
 		}
 		
 		newMentions.remove(word.toLowerCase());
-		mentions.put(uuid, newMentions.toArray(new String[0]));
+		mentions.put(uuid, newMentions);
 		
 		if (!saveMentions()) {
 			player.sendMessage(ChatColor.RED + "Could not save mentions! Please contact an admin!");
 			
-			if (oldMentions.length > 0) {
-				mentions.put(uuid, oldMentions);
-			} else {
+			if (playerMentions == null) {
 				mentions.remove(uuid);
+			} else {
+				mentions.put(uuid, oldMentions);
 			}
 			
 			return;
@@ -205,13 +212,18 @@ public class Mentio extends Module implements Listener {
 	public void listWords(CommandSender sender) {
 		Player player = (Player) sender;
 		String uuid = player.getUniqueId().toString();
-		String[] playerMentions = mentions.get(uuid);
+		List<String> playerMentions = mentions.get(uuid);
 		
-		player.sendMessage(ChatColor.GREEN + "Words you are currently listening for: (case ignored)");
+		player.sendMessage(ChatColor.GREEN + "Words you are currently listening for (case ignored):");
 		
-		if (playerMentions == null || playerMentions.length == 0) {
+		if (playerMentions == null) {
 			player.sendMessage(ChatColor.RED + " - " + ChatColor.DARK_AQUA + player.getName().toLowerCase());
-			player.sendMessage(ChatColor.RED + " - " + ChatColor.DARK_AQUA + player.getDisplayName().toLowerCase());
+			player.sendMessage(ChatColor.RED + " - " + ChatColor.DARK_AQUA + getDisplayNameWithoutSuffix(player));
+			return;
+		}
+		
+		if (playerMentions.size() == 0) {
+			player.sendMessage(ChatColor.GREEN + "  You are currently not litstening for any words!");
 			return;
 		}
 		
@@ -222,25 +234,24 @@ public class Mentio extends Module implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChat(AsyncPlayerChatEvent e) {
-		List<String> words = new ArrayList<>();
-		words.addAll(Arrays.asList(e.getMessage().split(" ")));
+		List<String> words = new ArrayList<String>(Arrays.asList(e.getMessage().split(" ")));
 		
 		for (Player recipient : e.getRecipients()) {
 			String uuid = recipient.getUniqueId().toString();
-			String[] listenWords;
+			List<String> playerMentions = mentions.get(uuid);
 			
-			if (mentions.containsKey(uuid)) {
-				listenWords = mentions.get(uuid);
-			} else {
-				listenWords = new String[] {recipient.getName(), ChatColor.stripColor(recipient.getDisplayName())};
+			if (playerMentions == null) {
+				playerMentions = new ArrayList<String>();
+				playerMentions.add(recipient.getName());
+				playerMentions.add(getDisplayNameWithoutSuffix(recipient));
 			}
 			
-			List<String> wordsCopy = new ArrayList<>(words);
+			List<String> mentioColoredWords = new ArrayList<String>(words);
 			boolean isMentioned = false;
 			
-			for (String listenWord : listenWords) {
-				for (int i = 0; i < wordsCopy.size(); i++) {
-					String word = wordsCopy.get(i);
+			for (String listenWord : playerMentions) {
+				for (int i = 0; i < mentioColoredWords.size(); i++) {
+					String word = mentioColoredWords.get(i);
 					
 					if (word.toLowerCase().contains(listenWord.toLowerCase())) {
 						isMentioned = true;
@@ -252,7 +263,7 @@ public class Mentio extends Module implements Listener {
 						
 						formatting = findAllColors(formatting);
 						
-						wordsCopy.set(i, ChatColor.GREEN + "" + ChatColor.ITALIC + ChatColor.stripColor(word) + formatting);
+						mentioColoredWords.set(i, ChatColor.GREEN + "" + ChatColor.ITALIC + ChatColor.stripColor(word) + formatting);
 					}
 				}
 			}
@@ -265,7 +276,7 @@ public class Mentio extends Module implements Listener {
 					continue;
 				}
 				
-				String message = String.join(" ", wordsCopy.toArray(new String[0]));
+				String message = String.join(" ", mentioColoredWords.toArray(new String[0]));
 				recipient.sendMessage(e.getFormat().replace("%1$s", e.getPlayer().getDisplayName()).replace("%2$s", message));
 				recipient.playSound(recipient.getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 2);
 			}
