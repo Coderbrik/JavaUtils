@@ -75,9 +75,13 @@ public class Mentio extends Module implements Listener {
 			
 			for (Object key : json.keySet()) {
 				JSONArray mentionsJSONArray = (JSONArray) json.get(key);
-				String[] mentionsArray = (String[]) mentionsJSONArray.toArray();
+				List<String> mentionsArray = new ArrayList<>();
 				
-				mentions.put((String) key, mentionsArray);
+				for (Object o : mentionsJSONArray.toArray()) {
+					mentionsArray.add(o.toString());
+				}
+				
+				mentions.put((String) key, mentionsArray.toArray(new String[0]));
 			}
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
