@@ -1,7 +1,7 @@
 command imout {
-	[string:not] {
+	[empty] {
 		help Makes you magically disappear;
 		perm utils.imout;
-		run imout not;
+		run imout;
 	}
 }
