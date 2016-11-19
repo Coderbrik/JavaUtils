@@ -63,7 +63,7 @@ public class AdminChat extends Module implements Listener {
 							player.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', e.getMessage().substring(1)));
 						}
 					}
-					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
+					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', e.getMessage()).substring(1));
 				}
 			} else if (e.getMessage().startsWith(",")) {
 				e.setCancelled(true);
@@ -72,7 +72,7 @@ public class AdminChat extends Module implements Listener {
 						player.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', e.getMessage().substring(1)));
 					}
 				}
-				Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + e.getMessage().substring(1));
+				Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', e.getMessage()).substring(1));
 			} else {
 				if (ac_toggle_list.contains(e.getPlayer().getName())) {
 					e.setCancelled(true);
@@ -81,6 +81,7 @@ public class AdminChat extends Module implements Listener {
 							player.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', e.getMessage()));
 						}
 					}
+					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.translateAlternateColorCodes('&', e.getMessage()));
 				}
 			}
 		}
@@ -128,7 +129,7 @@ public class AdminChat extends Module implements Listener {
 				player.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + name + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', message));
 			}
 		}
-		Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + name + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + message);
+		Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + name + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', message));
 	}
 	
 	@Command(hook = "ackey")
