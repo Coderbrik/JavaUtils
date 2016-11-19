@@ -31,8 +31,8 @@ import com.redstoner.moduleLoader.Module;
 import com.redstoner.moduleLoader.ModuleLoader;
 
 public class Mentio extends Module implements Listener {
-	private Map<String, List<String>> mentions;
-	private File configFile;
+	private Map<String, List<String>>	mentions;
+	private File						configFile;
 	
 	@Override
 	public String getName() {
