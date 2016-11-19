@@ -27,7 +27,7 @@ public class Imout extends Module{
 	}
 	
 	@Command(hook = "imout")
-	public void on_imout_command(CommandSender sender, String not){
+	public void on_imout_command(CommandSender sender){
 		if (!(sender instanceof Player)){
 			sender.sendMessage("§cThis command can't be run from the console");
 		}
