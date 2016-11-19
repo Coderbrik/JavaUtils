@@ -61,7 +61,7 @@ public class AdminChat extends Module implements Listener {
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						if (player.hasPermission("utils.ac")) {
 							sendMessage(player, e.getMessage().substring(1));
-							}
+						}
 					}
 					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', e.getMessage()).substring(1));
 				}
@@ -79,7 +79,7 @@ public class AdminChat extends Module implements Listener {
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						if (player.hasPermission("utils.ac")) {
 							sendMessage(player, e.getMessage());
-							}
+						}
 					}
 					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + e.getPlayer().getDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.translateAlternateColorCodes('&', e.getMessage()));
 				}
@@ -127,7 +127,7 @@ public class AdminChat extends Module implements Listener {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (player.hasPermission("utils.ac")) {
 				sendMessage(player, message);
-				}
+			}
 		}
 		Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + name + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', message));
 	}
@@ -144,7 +144,7 @@ public class AdminChat extends Module implements Listener {
 		keys.put(player.getUniqueId(), acKey);
 	}
 	
-	public void sendMessage(Player p, String message){
+	public void sendMessage(Player p, String message) {
 		p.sendMessage((ChatColor.DARK_GRAY + "[" + ChatColor.RED + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + ": " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', message)));
 		
 	}
