@@ -27,36 +27,30 @@ public class Imout extends Module {
 	
 	@Command(hook = "imout")
 	public void onImoutCommand(CommandSender sender) {
-		if (sender instanceof Player) {
-			sender.sendMessage("§cThis command can't be run from the console");
+		Player s = (Player) sender;
+		String name = sender.getName();
+		if (imout_toggle_list.contains(name)) {
+			String symbol = "§a§l+";
+			sender.sendMessage("§eWelcome back! You are no longer hidden");
+			sender.sendMessage("§6We disabled /act for you!");
+			s.performCommand("vanish off");
+			if (AdminChat.ac_toggle_list.contains(name)) {
+				AdminChat.ac_toggle_list.remove(name);
+			}
+			imout_toggle_list.remove(name);
+			Bukkit.broadcastMessage(symbol + " §7" + name);
 		}
-		
-		else {
-			Player s = (Player) sender;
-			String name = sender.getName();
-			if (imout_toggle_list.contains(name)) {
-				String symbol = "§a§l+";
-				sender.sendMessage("§eWelcome back! You are no longer hidden");
-				sender.sendMessage("§6We disabled /act for you!");
-				s.performCommand("vanish off");
-				if (AdminChat.ac_toggle_list.contains(name)) {
-					AdminChat.ac_toggle_list.remove(name);
-				}
-				imout_toggle_list.remove(name);
-				Bukkit.broadcastMessage(symbol + " §7" + name);
-			}
 			
-			else {
-				String symbol = "§c§l-";
-				sender.sendMessage("§eYou just left... Or didn't you?");
-				imout_toggle_list.add(name);
-				s.sendMessage("&6We enabled /act for you!");
-				s.performCommand("vanish on");
-				if (!(AdminChat.ac_toggle_list.contains(name))) {
-					AdminChat.ac_toggle_list.add(name);
-				}
-				Bukkit.broadcastMessage(symbol + " §7" + name);
+		else {
+			String symbol = "§c§l-";
+			sender.sendMessage("§eYou just left... Or didn't you?");
+			imout_toggle_list.add(name);
+			s.sendMessage("&6We enabled /act for you!");
+			s.performCommand("vanish on");
+			if (!(AdminChat.ac_toggle_list.contains(name))) {
+				AdminChat.ac_toggle_list.add(name);
 			}
+			Bukkit.broadcastMessage(symbol + " §7" + name);
 		}
 	}
 }
