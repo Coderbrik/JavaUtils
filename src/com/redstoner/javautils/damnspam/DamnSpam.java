@@ -31,10 +31,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
+import com.redstoner.moduleLoader.interfaces.Module;
+import com.redstoner.moduleLoader.misc.FolderRegistry;
 
-public class DamnSpam extends Module implements Listener {
+public class DamnSpam implements Module, Listener {
 	
 	@Override
 	public String getDescription() {
@@ -45,8 +45,6 @@ public class DamnSpam extends Module implements Listener {
 	public String getName() {
 		return "DamnSpam";
 	}
-	
-	ModuleLoader loader;
 	
 	File configFile;
 	
@@ -64,10 +62,8 @@ public class DamnSpam extends Module implements Listener {
 	String timeoutErrorString = "&cThe timeout must be -1 or within 0 and " + maxTimeout;
 	
 	@Override
-	public void onEnable() {
-		loader = ModuleLoader.getLoader();
-		
-		configFile = new File(loader.getConfigFolder(), "DamnSpam.json");
+	public boolean onEnable() {
+		configFile = new File(FolderRegistry.configFolder, "DamnSpam.json");
 		
 		loadInputs();
 		
@@ -80,6 +76,8 @@ public class DamnSpam extends Module implements Listener {
 		attachedBlocks.put(Material.WOOD_BUTTON, new int[][] {{0, 8}, {5, 6, 7, 13, 14, 15}, {4, 12}, {3, 11}, {2, 10}, {1, 9}});
 		
 		players = new HashMap<Player, SpamInput>();
+		
+		return true;
 	}
 	
 	public void loadInputs() {

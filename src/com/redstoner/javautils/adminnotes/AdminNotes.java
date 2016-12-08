@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,14 +17,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.json.simple.parser.ParseException;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
+import com.redstoner.moduleLoader.interfaces.Module;
+import com.redstoner.moduleLoader.json.JSONManager;
+import com.redstoner.moduleLoader.misc.FolderRegistry;
 
-import net.md_5.bungee.api.ChatColor;
-
-public class AdminNotes extends Module implements Listener {
+public class AdminNotes implements Module, Listener {
 	
-	File file = new File(ModuleLoader.getLoader().getConfigFolder(), "adminnotes.json");
+	File file = new File(FolderRegistry.configFolder, "adminnotes.json");
 	
 	@Override
 	public String getDescription() {
@@ -36,19 +36,23 @@ public class AdminNotes extends Module implements Listener {
 	}
 	
 	@Override
-	public void onEnable() {
+	public boolean onEnable() {
 		if (file.exists()) {
 			try {
-				List<String> strings = ModuleLoader.loadList(file);
+				List<String> strings = JSONManager.loadList(file);
 				List<Note> notes = new ArrayList<>();
 				for (String string : strings) {
 					notes.add(Note.fromString(string));
 				}
 				Note.notes = notes;
+				
+				return true;
 			} catch (IOException | ParseException e) {
 				e.printStackTrace();
 			}
 		}
+		
+		return false;
 	}
 	
 	@EventHandler
@@ -61,16 +65,20 @@ public class AdminNotes extends Module implements Listener {
 	}
 	
 	@Override
-	public void onDisable() {
+	public boolean onDisable() {
 		List<String> strings = new ArrayList<>();
 		for (Note note : Note.notes) {
 			strings.add(note.toString());
 		}
 		try {
-			ModuleLoader.saveList(file, strings);
+			JSONManager.saveList(file, strings);
+			
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return false;
 	}
 	
 	@Command(hook = "an_create")

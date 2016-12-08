@@ -20,14 +20,15 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
+import com.redstoner.moduleLoader.interfaces.Module;
+import com.redstoner.moduleLoader.json.JSONManager;
+import com.redstoner.moduleLoader.mysql.MysqlHandler;
 import com.redstoner.moduleLoader.mysql.elements.ConstraintOperator;
 import com.redstoner.moduleLoader.mysql.elements.MysqlConstraint;
 import com.redstoner.moduleLoader.mysql.elements.MysqlDatabase;
 import com.redstoner.moduleLoader.mysql.elements.MysqlTable;
 
-public class Check extends Module implements Listener {
+public class Check implements Module, Listener {
 	
 	MysqlTable table;
 	
@@ -42,29 +43,26 @@ public class Check extends Module implements Listener {
 	}
 	
 	@Override
-	public void onEnable() {
-		
-		ModuleLoader loader = ModuleLoader.getLoader();
-		Map<String, String> config = loader.getConfiguration("Check.json");
+	public boolean onEnable() {
+		Map<String, String> config = JSONManager.getConfiguration("Check.json");
 		
 		if (config == null || !config.containsKey("database") || !config.containsKey("table")) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not load the Check config file, disabling!");
 			
-			enabled = false;
-			return;
+			return false;
 		}
 		
 		try {
-			MysqlDatabase database = ModuleLoader.getLoader().getMysqlHandler().getDatabase(config.get("database"));
+			MysqlDatabase database = MysqlHandler.INSTANCE.getDatabase(config.get("database"));
 			
 			table = database.getTable(config.get("table"));
 		} catch (NullPointerException e) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not use the Check config, disabling!");
 			
-			enabled = false;
-			return;
+			return false;
 		}
 		
+		return true;
 	}
 	
 	@SuppressWarnings("deprecation")

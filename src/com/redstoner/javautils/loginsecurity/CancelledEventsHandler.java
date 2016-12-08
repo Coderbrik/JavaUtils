@@ -25,7 +25,7 @@ public class CancelledEventsHandler implements Listener {
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
 		if (isLoggingIn(e.getPlayer())) {
-			e.getPlayer().teleport(mainClass.loggingIn.get(e.getPlayer().getUniqueId()));
+			e.getPlayer().teleport(LoginSecurity.loggingIn.get(e.getPlayer().getUniqueId()));
 		}
 	}
 	

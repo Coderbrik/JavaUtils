@@ -1,6 +1,5 @@
 package com.redstoner.javautils.blockplacemods.mods;
 
-import com.redstoner.moduleLoader.ModuleLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -11,6 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 
+import com.redstoner.moduleLoader.misc.BukkitPlugin;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -18,7 +19,7 @@ import java.util.Set;
 public class ModBooleanTorch extends ModBooleanAbstract {
 	
 	{
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(ModuleLoader.getLoader(), this::updateTorches, 2, 2);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(BukkitPlugin.INSTANCE, this::updateTorches, 2, 2);
 	}
 	
 	private final Set<Block> torchesPlaced = new HashSet<>();

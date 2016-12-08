@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.redstoner.moduleLoader.Module;
+import com.redstoner.moduleLoader.interfaces.Module;
 
-public class SkullClick extends Module implements Listener {
+public class SkullClick implements Module, Listener {
 	@Override
 	public String getName() {
 		return "SkullClick";

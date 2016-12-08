@@ -6,9 +6,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import com.redstoner.moduleLoader.Module;
 
-public class NameTags extends Module implements Listener {
+import com.redstoner.moduleLoader.interfaces.Module;
+
+public class NameTags implements Module, Listener {
 	private Scoreboard scoreboard = null;
 	
 	@Override
@@ -22,7 +23,7 @@ public class NameTags extends Module implements Listener {
 	}
 	
 	@Override
-	public void onEnable() {
+	public boolean onEnable() {
 		scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 		
 		for (Rank rank : Rank.values()) {
@@ -31,6 +32,8 @@ public class NameTags extends Module implements Listener {
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "scoreboard teams option " + rank.getScoreboardName() + " color " + rank.getColor());
 			}
 		}
+		
+		return true;
 	}
 	
 	@EventHandler

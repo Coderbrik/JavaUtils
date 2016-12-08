@@ -6,9 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
+import com.redstoner.moduleLoader.interfaces.Module;
 
-public class Warn extends Module {
+public class Warn implements Module {
 	@Command(hook = "warn")
 	public void warn_normal(CommandSender sender, String name) {
 		Player s = (Player) sender;

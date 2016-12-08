@@ -1,14 +1,9 @@
 package com.redstoner.javautils.blockplacemods;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.redstoner.javautils.blockplacemods.mods.ModAbstract;
-import com.redstoner.javautils.blockplacemods.saving.JsonFileAdapter;
-import com.redstoner.javautils.blockplacemods.saving.JsonLoadable;
-import com.redstoner.javautils.blockplacemods.saving.JsonLoadableAdapter;
-import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
+import java.io.File;
+import java.util.Map;
+import java.util.function.Consumer;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,11 +12,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.io.File;
-import java.util.Map;
-import java.util.function.Consumer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.redstoner.javautils.blockplacemods.mods.ModAbstract;
+import com.redstoner.javautils.blockplacemods.saving.JsonFileAdapter;
+import com.redstoner.javautils.blockplacemods.saving.JsonLoadable;
+import com.redstoner.javautils.blockplacemods.saving.JsonLoadableAdapter;
+import com.redstoner.moduleLoader.interfaces.Module;
+import com.redstoner.moduleLoader.misc.BukkitPlugin;
+import com.redstoner.moduleLoader.misc.FolderRegistry;
 
-public final class BlockPlaceMods extends Module implements Listener {
+public final class BlockPlaceMods implements Module, Listener {
 	
 	private final Map<Player, PlayerData>		settings;
 	private final File							dataFolder;
@@ -30,25 +32,25 @@ public final class BlockPlaceMods extends Module implements Listener {
 	public BlockPlaceMods() {
 		ModAbstract.constructAll();
 		settings = ModAbstract.getSettings();
-		dataFolder = new File(ModuleLoader.getLoader().getDataFolder(), getName());
+		dataFolder = new File(FolderRegistry.configFolder, getName());
 		
 		Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(JsonLoadable.class, new JsonLoadableAdapter(PlayerData::new)).create();
 		
 		Consumer<Throwable> onErrorLoad = t -> {
 			String trace = ExceptionUtils.getStackTrace(t);
-			ModuleLoader.getPlugin().getLogger().severe("[BlockPlaceMods] Failed to load player file: \n" + trace);
+			BukkitPlugin.INSTANCE.getLogger().severe("[BlockPlaceMods] Failed to load player file: \n" + trace);
 		};
 		
 		Consumer<Throwable> onErrorSave = t -> {
 			String trace = ExceptionUtils.getStackTrace(t);
-			ModuleLoader.getPlugin().getLogger().severe("[BlockPlaceMods] Failed to save player file: \n" + trace);
+			BukkitPlugin.INSTANCE.getLogger().severe("[BlockPlaceMods] Failed to save player file: \n" + trace);
 		};
 		
 		fileAdapter = new JsonFileAdapter<>(new TypeToken<PlayerData>() {}, gson, onErrorLoad, onErrorSave);
 		
 		Bukkit.getOnlinePlayers().forEach(this::load);
 		
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(ModuleLoader.getLoader(), this::saveScheduledData, 100, 100);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(BukkitPlugin.INSTANCE, this::saveScheduledData, 100, 100);
 		
 	}
 	

@@ -18,8 +18,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
+import com.redstoner.moduleLoader.interfaces.Module;
+import com.redstoner.moduleLoader.json.JSONManager;
+import com.redstoner.moduleLoader.misc.BukkitPlugin;
+import com.redstoner.moduleLoader.mysql.MysqlHandler;
 import com.redstoner.moduleLoader.mysql.elements.ConstraintOperator;
 import com.redstoner.moduleLoader.mysql.elements.MysqlConstraint;
 import com.redstoner.moduleLoader.mysql.elements.MysqlDatabase;
@@ -27,7 +29,7 @@ import com.redstoner.moduleLoader.mysql.elements.MysqlField;
 import com.redstoner.moduleLoader.mysql.elements.MysqlTable;
 import com.redstoner.moduleLoader.mysql.types.text.VarChar;
 
-public class LoginSecurity extends Module implements Listener {
+public class LoginSecurity implements Module, Listener {
 	protected static Map<UUID, Location>	loggingIn;
 	private MysqlTable						table;
 	
@@ -42,20 +44,17 @@ public class LoginSecurity extends Module implements Listener {
 	}
 	
 	@Override
-	public void onEnable() {
-		ModuleLoader loader = ModuleLoader.getLoader();
-		
-		Map<String, String> config = loader.getConfiguration("LoginSecurity.json");
+	public boolean onEnable() {
+		Map<String, String> config = JSONManager.getConfiguration("LoginSecurity.json");
 		
 		if (config == null || !config.containsKey("database") || !config.containsKey("table")) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not load the LoginSecurity config file, disabling!");
 			
-			enabled = false;
-			return;
+			return false;
 		}
 		
 		try {
-			MysqlDatabase database = ModuleLoader.getLoader().getMysqlHandler().getDatabase(config.get("database"));
+			MysqlDatabase database = MysqlHandler.INSTANCE.getDatabase(config.get("database"));
 			
 			MysqlField uuid = new MysqlField("uuid", new VarChar(36), true);
 			MysqlField pass = new MysqlField("pass", new VarChar(88), true);
@@ -66,13 +65,14 @@ public class LoginSecurity extends Module implements Listener {
 		} catch (NullPointerException e) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not use the LoginSecurity config, disabling!");
 			
-			enabled = false;
-			return;
+			return false;
 		}
 		
 		loggingIn = new HashMap<>();
 		
-		Bukkit.getServer().getPluginManager().registerEvents(new CancelledEventsHandler(this), ModuleLoader.getLoader());
+		Bukkit.getServer().getPluginManager().registerEvents(new CancelledEventsHandler(this), BukkitPlugin.INSTANCE);
+		
+		return true;
 	}
 	
 	public static Map<UUID, Location> getLoggingIn() {
@@ -205,9 +205,9 @@ public class LoginSecurity extends Module implements Listener {
 		BukkitScheduler scheduler = Bukkit.getScheduler();
 		RepeatingLoginRunnable repeatingRunnable = new RepeatingLoginRunnable(this, player);
 		
-		repeatingRunnable.setId(scheduler.scheduleSyncRepeatingTask(ModuleLoader.getLoader(), repeatingRunnable, 0L, 2L));
+		repeatingRunnable.setId(scheduler.scheduleSyncRepeatingTask(BukkitPlugin.INSTANCE, repeatingRunnable, 0L, 2L));
 		
-		scheduler.scheduleSyncDelayedTask(ModuleLoader.getLoader(), new Runnable() {
+		scheduler.scheduleSyncDelayedTask(BukkitPlugin.INSTANCE, new Runnable() {
 			@Override
 			public void run() {
 				if (isLoggingIn(player)) {

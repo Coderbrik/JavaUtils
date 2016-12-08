@@ -19,10 +19,11 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.json.simple.parser.ParseException;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
+import com.redstoner.moduleLoader.interfaces.Module;
+import com.redstoner.moduleLoader.json.JSONManager;
+import com.redstoner.moduleLoader.misc.FolderRegistry;
 
-public class AdminChat extends Module implements Listener {
+public class AdminChat implements Module, Listener {
 	public static List<String>		ac_toggle_list	= new ArrayList<>();
 	private Map<UUID, Character>	keys			= new HashMap<>();
 	
@@ -37,18 +38,21 @@ public class AdminChat extends Module implements Listener {
 	}
 	
 	@Override
-	public void onEnable() {
-		File file = new File(ModuleLoader.getLoader().getConfigFolder(), "adminchat.json");
+	public boolean onEnable() {
+		File file = new File(FolderRegistry.configFolder, "adminchat.json");
 		if (file.exists()) {
 			try {
-				Map<String, String> uuids = ModuleLoader.loadMap(file);
+				Map<String, String> uuids = JSONManager.loadMap(file);
 				for (Entry<String, String> entry : uuids.entrySet()) {
 					keys.put(UUID.fromString(entry.getKey()), entry.getValue().toCharArray()[0]);
 				}
+				
+				return true;
 			} catch (IOException | ParseException e) {
 				e.printStackTrace();
 			}
 		}
+		return false;
 	}
 	
 	@EventHandler
@@ -88,17 +92,21 @@ public class AdminChat extends Module implements Listener {
 	}
 	
 	@Override
-	public void onDisable() {
+	public boolean onDisable() {
 		Map<String, String> entries = new HashMap<>();
 		for (Entry<UUID, Character> entry : keys.entrySet()) {
 			entries.put(entry.getKey().toString(), Character.toString(entry.getValue()));
 		}
-		File file = new File(ModuleLoader.getLoader().getConfigFolder(), "adminchat.json");
+		File file = new File(FolderRegistry.configFolder, "adminchat.json");
 		try {
-			ModuleLoader.saveMap(file, entries);
+			JSONManager.saveMap(file, entries);
+			
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return false;
 	}
 	
 	@Command(hook = "act")

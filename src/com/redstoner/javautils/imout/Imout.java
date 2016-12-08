@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.javautils.adminchat.AdminChat;
-import com.redstoner.moduleLoader.Module;
+import com.redstoner.moduleLoader.interfaces.Module;
 
-public class Imout extends Module {
+public class Imout implements Module {
 	
 	List<String> imout_toggle_list = new ArrayList<String>();
 	

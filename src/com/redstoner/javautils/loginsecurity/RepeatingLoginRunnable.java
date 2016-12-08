@@ -17,7 +17,7 @@ public class RepeatingLoginRunnable implements Runnable {
 	@Override
 	public void run() {
 		if (!player.isOnline()) {
-			mainClass.loggingIn.remove(player.getUniqueId());
+			LoginSecurity.loggingIn.remove(player.getUniqueId());
 			Bukkit.getScheduler().cancelTask(id);
 		}
 		

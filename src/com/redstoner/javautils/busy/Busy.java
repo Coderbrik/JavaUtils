@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,10 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
 
-public class Busy extends Module implements Listener {
+import com.nemez.cmdmgr.Command;
+import com.redstoner.moduleLoader.interfaces.Module;
+
+public class Busy implements Module, Listener {
 	
 	private List<Player>		busy			= new ArrayList<>();
 	private Map<Player, String>	targets			= new HashMap<>();

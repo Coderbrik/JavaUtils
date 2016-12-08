@@ -16,11 +16,10 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.nemez.cmdmgr.Command;
 import com.redstoner.javautils.loginsecurity.LoginSecurity;
-import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
+import com.redstoner.moduleLoader.interfaces.Module;
+import com.redstoner.moduleLoader.json.JSONManager;
 
-public class ChatGroups extends Module implements Listener {
-	ModuleLoader				loader;
+public class ChatGroups implements Module, Listener {
 	private Map<String, String>	keys, groups;
 	
 	private List<String> cgToggles;
@@ -41,21 +40,21 @@ public class ChatGroups extends Module implements Listener {
 	}
 	
 	@Override
-	public void onEnable() {
-		loader = ModuleLoader.getLoader();
-		
-		keys = loader.getConfiguration(KEYS_FILENAME);
-		groups = loader.getConfiguration(GROUPS_FILENAME);
+	public boolean onEnable() {
+		keys = JSONManager.getConfiguration(KEYS_FILENAME);
+		groups = JSONManager.getConfiguration(GROUPS_FILENAME);
 		
 		cgToggles = new ArrayList<>();
+		
+		return true;
 	}
 	
 	private void saveKeys() {
-		loader.saveConfiguration(keys, KEYS_FILENAME);
+		JSONManager.saveConfiguration(keys, KEYS_FILENAME);
 	}
 	
 	private void saveGroups() {
-		loader.saveConfiguration(groups, GROUPS_FILENAME);
+		JSONManager.saveConfiguration(groups, GROUPS_FILENAME);
 	}
 	
 	private String getCgKey(String UUID) {

@@ -11,9 +11,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
+import com.redstoner.moduleLoader.interfaces.Module;
 
-public class LagChunks extends Module {
+public class LagChunks implements Module {
 	private List<LaggyChunk> laggyChunks = new ArrayList<LaggyChunk>();
 	
 	@Override

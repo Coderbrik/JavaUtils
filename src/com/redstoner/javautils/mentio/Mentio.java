@@ -27,10 +27,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.nemez.cmdmgr.Command;
-import com.redstoner.moduleLoader.Module;
-import com.redstoner.moduleLoader.ModuleLoader;
+import com.redstoner.moduleLoader.interfaces.Module;
+import com.redstoner.moduleLoader.misc.FolderRegistry;
 
-public class Mentio extends Module implements Listener {
+public class Mentio implements Module, Listener {
 	private Map<String, List<String>>	mentions;
 	private File						configFile;
 	
@@ -45,9 +45,8 @@ public class Mentio extends Module implements Listener {
 	}
 	
 	@Override
-	public void onEnable() {
-		ModuleLoader loader = ModuleLoader.getLoader();
-		configFile = new File(loader.getConfigFolder(), "Mentio.json");
+	public boolean onEnable() {
+		configFile = new File(FolderRegistry.configFolder, "Mentio.json");
 		
 		if (!configFile.exists()) {
 			try {
@@ -61,8 +60,7 @@ public class Mentio extends Module implements Listener {
 				
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not create blank mentions file! Disabling.");
 				
-				enabled = false;
-				return;
+				return false;
 			}
 			
 		}
@@ -88,8 +86,10 @@ public class Mentio extends Module implements Listener {
 			
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not get mentions from file! Disabling.");
 			
-			enabled = false;
+			return false;
 		}
+		
+		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
