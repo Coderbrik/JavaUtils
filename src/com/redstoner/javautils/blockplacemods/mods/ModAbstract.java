@@ -6,7 +6,7 @@ import com.redstoner.javautils.blockplacemods.DefaultingMap;
 import com.redstoner.javautils.blockplacemods.PlayerData;
 import com.redstoner.javautils.blockplacemods.util.CommandException;
 import com.redstoner.javautils.blockplacemods.util.ThrowingSupplier;
-import com.redstoner.moduleLoader.misc.BukkitPlugin;
+import com.redstoner.moduleLoader.misc.ModuleLoader;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Bukkit;
@@ -67,8 +67,8 @@ public abstract class ModAbstract<T> implements Mod<T>, Listener {
 		cmdManagerString.append("}  ");
 		cmdManagerString.append("  ");
 		
-		CommandManager.registerCommand(getCmdManagerString(), this, BukkitPlugin.INSTANCE);
-		Bukkit.getPluginManager().registerEvents(this, BukkitPlugin.INSTANCE);
+		CommandManager.registerCommand(getCmdManagerString(), this, ModuleLoader.getPlugin());
+		Bukkit.getPluginManager().registerEvents(this, ModuleLoader.getPlugin());
 		mods.add(this);
 	}
 	

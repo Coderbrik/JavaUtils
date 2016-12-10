@@ -1,5 +1,6 @@
 package com.redstoner.javautils.chatgroups;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +21,9 @@ import com.redstoner.moduleLoader.interfaces.Module;
 import com.redstoner.moduleLoader.json.JSONManager;
 
 public class ChatGroups implements Module, Listener {
-	private Map<String, String>	keys, groups;
+	Map<Serializable, Serializable> keys;
+
+	private Map<Serializable, Serializable>	groups;
 	
 	private List<String> cgToggles;
 	
@@ -59,7 +62,7 @@ public class ChatGroups implements Module, Listener {
 	
 	private String getCgKey(String UUID) {
 		if (keys.containsKey(UUID)) {
-			return keys.get(UUID);
+			return (String) keys.get(UUID);
 		}
 		
 		return ":";
@@ -128,13 +131,13 @@ public class ChatGroups implements Module, Listener {
 			return;
 		}
 		
-		String curGroup = groups.get(uuid);
+		String curGroup = (String) groups.get(uuid);
 		
 		List<String> messages = new ArrayList<>();
 		String[] msgs = {"\n§2--=[ ChatGroups ]=--", "§2Current group: §a" + curGroup, "§2Users in this group:"};
 		messages.addAll(Arrays.asList(msgs));
 		
-		for (String key : groups.keySet()) {
+		for (Serializable key : groups.keySet()) {
 			if (groups.get(key).equals(curGroup)) {
 				messages.add("  - " + Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getPlayer().getDisplayName());
 			}

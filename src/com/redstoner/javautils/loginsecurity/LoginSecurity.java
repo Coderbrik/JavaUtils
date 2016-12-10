@@ -1,5 +1,6 @@
 package com.redstoner.javautils.loginsecurity;
 
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import com.nemez.cmdmgr.Command;
 import com.redstoner.moduleLoader.interfaces.Module;
 import com.redstoner.moduleLoader.json.JSONManager;
-import com.redstoner.moduleLoader.misc.BukkitPlugin;
+import com.redstoner.moduleLoader.misc.ModuleLoader;
 import com.redstoner.moduleLoader.mysql.MysqlHandler;
 import com.redstoner.moduleLoader.mysql.elements.ConstraintOperator;
 import com.redstoner.moduleLoader.mysql.elements.MysqlConstraint;
@@ -45,7 +46,7 @@ public class LoginSecurity implements Module, Listener {
 	
 	@Override
 	public boolean onEnable() {
-		Map<String, String> config = JSONManager.getConfiguration("LoginSecurity.json");
+		Map<Serializable, Serializable> config = JSONManager.getConfiguration("LoginSecurity.json");
 		
 		if (config == null || !config.containsKey("database") || !config.containsKey("table")) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not load the LoginSecurity config file, disabling!");
@@ -54,14 +55,14 @@ public class LoginSecurity implements Module, Listener {
 		}
 		
 		try {
-			MysqlDatabase database = MysqlHandler.INSTANCE.getDatabase(config.get("database"));
+			MysqlDatabase database = MysqlHandler.INSTANCE.getDatabase((String) config.get("database"));
 			
 			MysqlField uuid = new MysqlField("uuid", new VarChar(36), true);
 			MysqlField pass = new MysqlField("pass", new VarChar(88), true);
 			
-			database.createTableIfNotExists(config.get("table"), uuid, pass);
+			database.createTableIfNotExists((String) config.get("table"), uuid, pass);
 			
-			table = database.getTable(config.get("table"));
+			table = database.getTable((String) config.get("table"));
 		} catch (NullPointerException e) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not use the LoginSecurity config, disabling!");
 			
@@ -70,7 +71,7 @@ public class LoginSecurity implements Module, Listener {
 		
 		loggingIn = new HashMap<>();
 		
-		Bukkit.getServer().getPluginManager().registerEvents(new CancelledEventsHandler(this), BukkitPlugin.INSTANCE);
+		Bukkit.getServer().getPluginManager().registerEvents(new CancelledEventsHandler(this), ModuleLoader.getPlugin());
 		
 		return true;
 	}
@@ -205,9 +206,9 @@ public class LoginSecurity implements Module, Listener {
 		BukkitScheduler scheduler = Bukkit.getScheduler();
 		RepeatingLoginRunnable repeatingRunnable = new RepeatingLoginRunnable(this, player);
 		
-		repeatingRunnable.setId(scheduler.scheduleSyncRepeatingTask(BukkitPlugin.INSTANCE, repeatingRunnable, 0L, 2L));
+		repeatingRunnable.setId(scheduler.scheduleSyncRepeatingTask(ModuleLoader.getPlugin(), repeatingRunnable, 0L, 2L));
 		
-		scheduler.scheduleSyncDelayedTask(BukkitPlugin.INSTANCE, new Runnable() {
+		scheduler.scheduleSyncDelayedTask(ModuleLoader.getPlugin(), new Runnable() {
 			@Override
 			public void run() {
 				if (isLoggingIn(player)) {

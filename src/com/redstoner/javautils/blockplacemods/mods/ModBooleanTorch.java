@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import com.redstoner.moduleLoader.misc.BukkitPlugin;
+import com.redstoner.moduleLoader.misc.ModuleLoader;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,7 +19,7 @@ import java.util.Set;
 public class ModBooleanTorch extends ModBooleanAbstract {
 	
 	{
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(BukkitPlugin.INSTANCE, this::updateTorches, 2, 2);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(ModuleLoader.getPlugin(), this::updateTorches, 2, 2);
 	}
 	
 	private final Set<Block> torchesPlaced = new HashSet<>();

@@ -2,6 +2,7 @@ package com.redstoner.javautils.check;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -44,7 +45,7 @@ public class Check implements Module, Listener {
 	
 	@Override
 	public boolean onEnable() {
-		Map<String, String> config = JSONManager.getConfiguration("Check.json");
+		Map<Serializable, Serializable> config = JSONManager.getConfiguration("Check.json");
 		
 		if (config == null || !config.containsKey("database") || !config.containsKey("table")) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not load the Check config file, disabling!");
@@ -53,9 +54,9 @@ public class Check implements Module, Listener {
 		}
 		
 		try {
-			MysqlDatabase database = MysqlHandler.INSTANCE.getDatabase(config.get("database"));
+			MysqlDatabase database = MysqlHandler.INSTANCE.getDatabase((String) config.get("database"));
 			
-			table = database.getTable(config.get("table"));
+			table = database.getTable((String) config.get("table"));
 		} catch (NullPointerException e) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Could not use the Check config, disabling!");
 			

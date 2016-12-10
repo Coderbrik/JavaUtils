@@ -20,7 +20,7 @@ import com.redstoner.javautils.blockplacemods.saving.JsonFileAdapter;
 import com.redstoner.javautils.blockplacemods.saving.JsonLoadable;
 import com.redstoner.javautils.blockplacemods.saving.JsonLoadableAdapter;
 import com.redstoner.moduleLoader.interfaces.Module;
-import com.redstoner.moduleLoader.misc.BukkitPlugin;
+import com.redstoner.moduleLoader.misc.ModuleLoader;
 import com.redstoner.moduleLoader.misc.FolderRegistry;
 
 public final class BlockPlaceMods implements Module, Listener {
@@ -38,19 +38,19 @@ public final class BlockPlaceMods implements Module, Listener {
 		
 		Consumer<Throwable> onErrorLoad = t -> {
 			String trace = ExceptionUtils.getStackTrace(t);
-			BukkitPlugin.INSTANCE.getLogger().severe("[BlockPlaceMods] Failed to load player file: \n" + trace);
+			ModuleLoader.getPlugin().getLogger().severe("[BlockPlaceMods] Failed to load player file: \n" + trace);
 		};
 		
 		Consumer<Throwable> onErrorSave = t -> {
 			String trace = ExceptionUtils.getStackTrace(t);
-			BukkitPlugin.INSTANCE.getLogger().severe("[BlockPlaceMods] Failed to save player file: \n" + trace);
+			ModuleLoader.getPlugin().getLogger().severe("[BlockPlaceMods] Failed to save player file: \n" + trace);
 		};
 		
 		fileAdapter = new JsonFileAdapter<>(new TypeToken<PlayerData>() {}, gson, onErrorLoad, onErrorSave);
 		
 		Bukkit.getOnlinePlayers().forEach(this::load);
 		
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(BukkitPlugin.INSTANCE, this::saveScheduledData, 100, 100);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(ModuleLoader.getPlugin(), this::saveScheduledData, 100, 100);
 		
 	}
 	

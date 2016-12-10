@@ -2,6 +2,7 @@ package com.redstoner.javautils.adminnotes;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,10 +40,10 @@ public class AdminNotes implements Module, Listener {
 	public boolean onEnable() {
 		if (file.exists()) {
 			try {
-				List<String> strings = JSONManager.loadList(file);
+				List<Serializable> strings = JSONManager.loadList(file);
 				List<Note> notes = new ArrayList<>();
-				for (String string : strings) {
-					notes.add(Note.fromString(string));
+				for (Serializable string : strings) {
+					notes.add(Note.fromString((String) string));
 				}
 				Note.notes = notes;
 				
@@ -66,7 +67,7 @@ public class AdminNotes implements Module, Listener {
 	
 	@Override
 	public boolean onDisable() {
-		List<String> strings = new ArrayList<>();
+		List<Serializable> strings = new ArrayList<>();
 		for (Note note : Note.notes) {
 			strings.add(note.toString());
 		}

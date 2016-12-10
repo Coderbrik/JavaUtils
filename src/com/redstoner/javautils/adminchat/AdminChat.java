@@ -2,6 +2,7 @@ package com.redstoner.javautils.adminchat;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +43,9 @@ public class AdminChat implements Module, Listener {
 		File file = new File(FolderRegistry.configFolder, "adminchat.json");
 		if (file.exists()) {
 			try {
-				Map<String, String> uuids = JSONManager.loadMap(file);
-				for (Entry<String, String> entry : uuids.entrySet()) {
-					keys.put(UUID.fromString(entry.getKey()), entry.getValue().toCharArray()[0]);
+				Map<Serializable, Serializable> uuids = JSONManager.loadMap(file);
+				for (Entry<Serializable, Serializable> entry : uuids.entrySet()) {
+					keys.put(UUID.fromString((String) entry.getKey()), ((String) entry.getValue()).toCharArray()[0]);
 				}
 				
 				return true;
@@ -93,7 +94,7 @@ public class AdminChat implements Module, Listener {
 	
 	@Override
 	public boolean onDisable() {
-		Map<String, String> entries = new HashMap<>();
+		Map<Serializable, Serializable> entries = new HashMap<>();
 		for (Entry<UUID, Character> entry : keys.entrySet()) {
 			entries.put(entry.getKey().toString(), Character.toString(entry.getValue()));
 		}
